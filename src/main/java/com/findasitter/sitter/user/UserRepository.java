@@ -26,4 +26,20 @@ public class UserRepository {
     public Optional<User> findByEmail(String emailAddress) {
         return jdbcClient.sql("SELECT * FROM User WHERE user_emailaddress = :user_emailaddress").param("user_emailaddress", emailAddress).query(User.class).optional();
     }
+
+    public void create(User user) {
+        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip) values(?,?,?,?,?,?,?)")
+                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip()))
+                .update();
+
+        Assert.state(updated == 1, "Failed to create user: " + user.user_emailaddress());
+    }
+
+    public void update(User user, String email) {
+        var updated = jdbcClient.sql("update user set user_emailaddress = ?,user_phone = ?,user_fname = ?,user_lname = ?,user_address = ?,user_city = ?,user_zip = ? where user_emailaddress = ?")
+                .params(List.of(user.user_emailaddress(),user.user_phone(), user.user_fname(), user.user_lname(),user.user_address(),user.user_city(),user.user_zip(), email))
+                .update();
+
+        Assert.state(updated == 1, "Failed to update user: " + user.user_emailaddress());
+    }
 }
