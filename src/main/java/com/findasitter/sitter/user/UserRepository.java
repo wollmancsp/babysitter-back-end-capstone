@@ -42,4 +42,11 @@ public class UserRepository {
 
         Assert.state(updated == 1, "Failed to update user: " + user.user_emailaddress());
     }
+
+    public Optional<User> findByUsername(String username) {
+        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :user_emailaddress")
+                .param("user_emailaddress", username)
+                .query(User.class)
+                .optional();
+    }
 }
