@@ -32,7 +32,7 @@ public class UserController {
     public User findByEmail(@PathVariable String emailAddress) {
         Optional<User> user = userRepository.findByEmail(emailAddress);
         if (user.isEmpty()) {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException(); // Throw exception if user not found
         }
         return user.get();
     }
@@ -45,7 +45,7 @@ public class UserController {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword); // Set encoded password
 
-        userRepository.create(user);
+        userRepository.create(user); // Save user to repository
     }
 
     // Updates existing user with the specified email address
@@ -56,59 +56,6 @@ public class UserController {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword); // Set encoded password
 
-        userRepository.update(user, email);
+        userRepository.update(user, email); // Update user in repository
     }
 }
-
-
-
-//package com.findasitter.sitter.user;
-//
-//
-//import jakarta.validation.Valid;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Optional;
-//
-//@RestController
-//@RequestMapping("/users")
-//@CrossOrigin("http://localhost:8080")
-//public class UserController {
-//    private final UserRepository userRepository;
-//
-//    public UserController(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    // Lists all user accounts in database
-//    @GetMapping("")
-//    List<User> findAllUsers() {
-//        return userRepository.findAllUsers();
-//    }
-//
-//    // Searches database to find user record with a specified email address
-//    @GetMapping("{emailAddress}")
-//    User findById(@PathVariable String emailAddress) {
-//        Optional<User> run = userRepository.findByEmail(emailAddress);
-//        if (run.isEmpty()) {
-//            throw new UserNotFoundException();
-//        }
-//        return run.get();
-//    }
-//    // Creates new user
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping
-//    void create(@Valid @RequestBody User user) {
-//        userRepository.create(user);
-//    }
-//
-//    // Updates existing user with specified email address
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    @PutMapping("/{email}")
-//    void update(@Valid @RequestBody User user, @PathVariable String email) {
-//        userRepository.update(user, email);
-//    }
-//
-//}
