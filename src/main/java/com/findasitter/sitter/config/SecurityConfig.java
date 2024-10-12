@@ -36,7 +36,6 @@ public class SecurityConfig {
                         .logoutUrl("/api/logout") // Define logout endpoint
                         .permitAll() // Allow access to logout URL
                 );
-
         return http.build();
     }
 
