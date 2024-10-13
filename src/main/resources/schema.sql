@@ -1,4 +1,4 @@
-CREATE DATABASE sitter_dev IF NOT EXISTS;
+CREATE DATABASE IF NOT EXISTS sitter_dev;
 USE sitter_dev;
 CREATE TABLE IF NOT EXISTS parent (
                                       parent_id INT AUTO_INCREMENT PRIMARY KEY,

@@ -20,17 +20,17 @@ public class UserRepository {
     }
 
     public List<User> findAllUsers() {
-        return jdbcClient.sql("select * from user").query(User.class).list();
+        return jdbcClient.sql("SELECT * FROM user").query(User.class).list();
     }
-
+//dustin
 //    public Optional<User> findByEmail(String emailAddress) {
 //        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :user_emailaddress")
-//                .param("email", emailAddress)
+//                .param(emailAddress)
 //                .query(User.class).optional();
 //    }
 
     public Optional<User> findByEmail(String emailAddress) {
-        return jdbcClient.sql("SELECT * FROM users WHERE email = :email")  // Correct column name and table
+        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :emailAddress")  // Correct column name and table
                 .param(emailAddress)
                 .query(User.class)
                 .optional();
@@ -45,10 +45,9 @@ public class UserRepository {
 //    }
 
     public void create(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(email, user_phone, user_fname, user_lname, user_address, user_city, user_zip) VALUES(?, ?, ?, ?, ?, ?, ?)")
+        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress, user_phone, user_fname, user_lname, user_address, user_city, user_zip) VALUES(?, ?, ?, ?, ?, ?, ?)")
                 .params(user.getEmail(), user.getUser_phone(), user.getUser_fname(), user.getUser_lname(), user.getUser_address(), user.getUser_city(), user.getUser_zip())  // Pass params directly
                 .update();
-
         Assert.state(updated == 1, "Failed to create user: " + user.getEmail());
     }
 
@@ -61,16 +60,16 @@ public class UserRepository {
 //    }
 
     public void update(User user, String email) {
-        var updated = jdbcClient.sql("UPDATE user SET email = ?, user_phone = ?, user_fname = ?, user_lname = ?, user_address = ?, user_city = ?, user_zip = ? WHERE email = ?")
+        var updated = jdbcClient.sql("UPDATE user SET user_emailaddress = ?, user_phone = ?, user_fname = ?, user_lname = ?, user_address = ?, user_city = ?, user_zip = ? WHERE email = ?")
                 .params(user.getEmail(), user.getUser_phone(), user.getUser_fname(), user.getUser_lname(), user.getUser_address(), user.getUser_city(), user.getUser_zip(), email)  // Pass params directly
                 .update();
 
         Assert.state(updated == 1, "Failed to update user: " + user.getEmail());
     }
 
-    public Optional<User> findByUsername(String username) {
+    public Optional<User> findByUsername(String emailAddress) {
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
-                .param(username)
+                .param(emailAddress)
                 .query(User.class)
                 .optional();
     }

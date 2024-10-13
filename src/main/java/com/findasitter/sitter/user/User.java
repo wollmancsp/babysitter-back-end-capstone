@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -25,7 +25,7 @@ public class User implements UserDetails {
 
     @Email
     @Column(unique = true)
-    private String email;
+    private String user_emailaddress;
 
     private String user_fname;
     private String user_lname;
@@ -46,8 +46,8 @@ public class User implements UserDetails {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getEmail() { return user_emailaddress; }
+    public void setEmail(String user_emailaddress) { this.user_emailaddress = user_emailaddress; }
 
     public String getUser_fname() { return user_fname; }
     public void setUser_fname(String user_fname) { this.user_fname = user_fname; }
