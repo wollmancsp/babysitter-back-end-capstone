@@ -32,13 +32,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**") // Consider allowing CSRF for API endpoints
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) // Use cookie-based CSRF tokens if needed
-                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/register").permitAll()
-                        .requestMatchers("/users/lgin", "/users/logout").permitAll()// Allow access to registration endpoint
+                        .requestMatchers("/users/login", "/users/logout").permitAll()// Allow access to registration endpoint
                         .anyRequest().authenticated() // All other requests require authentication
                 )
                 .formLogin(form -> form
