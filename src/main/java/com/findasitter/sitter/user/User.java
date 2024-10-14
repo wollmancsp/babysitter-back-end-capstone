@@ -14,11 +14,11 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
 
-    @NotEmpty
-    @Column(unique = true)
-    private String username;
+//    @NotEmpty
+//    @Column(unique = true)
+//    private String username;
 
     @NotEmpty
     private String password;
@@ -37,13 +37,19 @@ public class User implements UserDetails {
     public User() {}
 
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() { return user_id; }
+    public void setId(Long id) { this.user_id = user_id; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+//    public String getUsername() { return username; }
+//    public void setUsername(String username) { this.username = username; }
 
     public String getPassword() { return password; }
+
+    @Override
+    public String getUsername() {
+        return user_emailaddress;
+    }
+
     public void setPassword(String password) { this.password = password; }
 
     public String getEmail() { return user_emailaddress; }

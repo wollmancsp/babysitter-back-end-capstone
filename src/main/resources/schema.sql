@@ -37,5 +37,6 @@ CREATE TABLE IF NOT EXISTS user (
                                     user_zip varchar(5),
                                     parent_id int,
                                     sitter_id int,
+                                    user_password VARCHAR(255),
                                     UNIQUE (user_emailaddress)
 );

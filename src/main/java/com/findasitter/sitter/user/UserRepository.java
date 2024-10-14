@@ -31,7 +31,7 @@ public class UserRepository {
 
     public Optional<User> findByEmail(String emailAddress) {
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :emailAddress")  // Correct column name and table
-                .param(emailAddress)
+                .param("emailAdress", emailAddress)
                 .query(User.class)
                 .optional();
     }
@@ -67,10 +67,10 @@ public class UserRepository {
         Assert.state(updated == 1, "Failed to update user: " + user.getEmail());
     }
 
-    public Optional<User> findByUsername(String emailAddress) {
-        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
-                .param(emailAddress)
-                .query(User.class)
-                .optional();
-    }
+//    public Optional<User> findByUsername(String emailAddress) {
+//        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
+//                .param(emailAddress)
+//                .query(User.class)
+//                .optional();
+//    }
 }
