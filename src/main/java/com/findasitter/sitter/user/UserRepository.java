@@ -31,7 +31,7 @@ public class UserRepository {
 
     public Optional<User> findByEmail(String emailAddress) {
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :emailAddress")  // Correct column name and table
-                .param("emailAdress", emailAddress)
+                .param(emailAddress)
                 .query(User.class)
                 .optional();
     }

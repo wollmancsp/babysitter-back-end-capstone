@@ -15,30 +15,29 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
-
-//    @NotEmpty
-//    @Column(unique = true)
-//    private String username;
-
     @NotEmpty
     private String password;
-
     @Email
     @Column(unique = true)
     private String user_emailaddress;
-
+    @Column
     private String user_fname;
+    @Column
     private String user_lname;
+    @Column
     private String user_phone;
+    @Column
     private String user_address;
+    @Column
     private String user_city;
+    @Column
     private String user_zip;
 
     public User() {}
 
 
     public Long getId() { return user_id; }
-    public void setId(Long id) { this.user_id = user_id; }
+    public void setId(Long id) { this.user_id = id; }
 
 //    public String getUsername() { return username; }
 //    public void setUsername(String username) { this.username = username; }
@@ -80,6 +79,15 @@ public class User implements UserDetails {
         return null;
     }
 
+// this can be used if we want to do roles
+//    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+//    @JoinTable(
+//            name="users_roles",
+//            joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
+//            inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
+//
+//    private List<Role> roles = new ArrayList<>();
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -100,32 +108,3 @@ public class User implements UserDetails {
         return true;
     }
 }
-//    public String user_emailaddress() {
-//        return null;
-//    }
-
-
-
-
-//import jakarta.validation.constraints.Email;
-//import jakarta.validation.constraints.NotEmpty;
-
-//public class User {
-//}
-//
-//
-//package com.findasitter.sitter.user;
-//
-//import jakarta.validation.constraints.Email;
-//import jakarta.validation.constraints.NotEmpty;
-//
-//public record User(
-//        Integer user_id,
-//        @NotEmpty String user_fname,
-//        @NotEmpty String user_lname,
-//        @Email String user_emailaddress,
-//        String user_phone,
-//        String user_address,
-//        String user_city,
-//        String user_zip
-//){}

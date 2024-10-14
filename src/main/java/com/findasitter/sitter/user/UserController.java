@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @CrossOrigin("http://localhost:8080")
 public class UserController {
 
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     // Searches database to find user record with a specified email address
-    @GetMapping("{emailAddress}")
+    @GetMapping("/{emailAddress}")
     public User findByEmail(@PathVariable String emailAddress) {
         Optional<User> user = userRepository.findByEmail(emailAddress);
         if (user.isEmpty()) {
@@ -48,9 +48,8 @@ public class UserController {
 
     // Creates a new user with an encrypted password
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/api/users/register")
     void create(@Valid @RequestBody User user) {
-        // Encrypt the user's password before saving
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword); // Set encoded password
         userRepository.create(user);
