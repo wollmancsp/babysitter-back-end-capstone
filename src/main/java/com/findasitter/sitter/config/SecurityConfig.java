@@ -33,23 +33,43 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register").permitAll()
-                        .requestMatchers("/users/login", "/users/logout").permitAll()// Allow access to registration endpoint
-                        .anyRequest().authenticated() // All other requests require authentication
+                        // Permit access to the registration and login-related endpoints
+                        .requestMatchers("/users/register", "/login", "/users/login", "/users/logout", "/login?error=true").permitAll()
+                        .anyRequest().authenticated() // Require authentication for all other requests
                 )
                 .formLogin(form -> form
-                        .loginProcessingUrl("/users/login") // Define login endpoint
-                        .loginPage("/login") // Define login page
+                        .loginProcessingUrl("/users/login") // Define login processing endpoint
+                        .loginPage("/login") // Define custom login page
                         .failureUrl("/login?error=true") // Redirect on login failure
-                        .permitAll() // Allow access to login form
+                        .permitAll() // Allow access to login page
                 )
                 .logout(logout -> logout
                         .logoutUrl("/users/logout") // Define logout endpoint
-                        .permitAll() // Allow access to log out URL
+                        .permitAll() // Allow access to log out
+                )
+                .sessionManagement(session -> session
+                        // Use STATELESS policy temporarily to rule out session-related issues
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
-                http.sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Adjust session management as needed
-                );
+//        http
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/users/register").permitAll()
+//                        .requestMatchers("/login","/users/login", "/users/logout").permitAll()// Allow access to registration endpoint
+//                        .anyRequest().authenticated() // All other requests require authentication
+//                )
+//                .formLogin(form -> form
+//                        .loginProcessingUrl("/users/login") // Define login endpoint
+//                        .loginPage("/login") // Define login page
+//                        .failureUrl("/login?error=true") // Redirect on login failure
+//                        .permitAll() // Allow access to login form
+//                )
+//                .logout(logout -> logout
+//                        .logoutUrl("/users/logout") // Define logout endpoint
+//                        .permitAll() // Allow access to log out URL
+//                );
+//                http.sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Adjust session management as needed
+//                );
         return http.build();
     }
 

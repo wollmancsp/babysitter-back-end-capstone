@@ -31,8 +31,8 @@ public class UserRepository {
     }
 
     public void create(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress, user_phone, user_fname, user_lname, user_address, user_city, user_zip) VALUES(?, ?, ?, ?, ?, ?, ?)")
-                .params(user.getEmail(), user.getUser_phone(), user.getUser_fname(), user.getUser_lname(), user.getUser_address(), user.getUser_city(), user.getUser_zip())  // Pass params directly
+        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress, user_phone, user_fname, user_lname, user_address, user_city, user_zip, password) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")
+                .params(user.getEmail(), user.getUser_phone(), user.getUser_fname(), user.getUser_lname(), user.getUser_address(), user.getUser_city(), user.getUser_zip(), user.getPassword())  // Pass params directly
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getEmail());
     }
