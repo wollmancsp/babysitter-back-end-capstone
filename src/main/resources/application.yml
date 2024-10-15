@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: sitter
+  datasource:
+    url: jdbc:mysql://csc450.ddns.net:4444/sitter_dev
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${oauth_client_id}
+            client-secret: ${oauth_client_secret}
