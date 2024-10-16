@@ -47,4 +47,13 @@ public class UserController {
         userRepository.update(user, email);
     }
 
+    @GetMapping("/oauth2/{provider}/{providerId}")
+    User findByProviderAndProviderId(@PathVariable String provider, @PathVariable String providerId) {
+        Optional<User> run = userRepository.findByProviderAndProviderId(provider, providerId);
+        if (run.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return run.get();
+    }
+
 }
