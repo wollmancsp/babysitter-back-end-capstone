@@ -7,9 +7,10 @@ public record User(
     Integer user_id,
     @NotEmpty String user_fname,
     @NotEmpty String user_lname,
-    @Email String user_emailaddress,
+    @Email String emailAddress,
     String user_phone,
     String user_address,
     String user_city,
     String user_zip
-        ){}
+        ){
+}
