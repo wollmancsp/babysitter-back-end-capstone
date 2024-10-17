@@ -13,6 +13,8 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:8080")
 public class UserController {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -37,6 +39,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     void create(@Valid @RequestBody User user) {
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
         userRepository.create(user);
     }
 

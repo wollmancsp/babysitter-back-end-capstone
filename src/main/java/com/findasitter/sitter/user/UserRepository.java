@@ -28,8 +28,8 @@ public class UserRepository {
     }
 
     public void create(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip) values(?,?,?,?,?,?,?)")
-                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip()))
+        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip,user_password) values(?,?,?,?,?,?,?,?)")
+                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip(),user.user_getPassword()))
                 .update();
 
         Assert.state(updated == 1, "Failed to create user: " + user.user_emailaddress());
