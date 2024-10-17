@@ -11,5 +11,6 @@ public record User(
     String user_phone,
     String user_address,
     String user_city,
-    String user_zip
+    String user_zip,
+    String user_password
         ){}

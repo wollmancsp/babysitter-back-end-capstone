@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
 
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -24,13 +26,18 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String emailAddress) {
-        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :user_emailaddress").param("user_emailaddress", emailAddress).query(User.class).optional();
+        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :user_emailaddress").param(List.of("user_emailaddress", emailAddress)).query(User.class).optional();
     }
 
     public void create(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip) values(?,?,?,?,?,?,?)")
-                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip()))
-                .update();
+        //var encryptedPass = BCrypt.hashpw(user.user_password(), BCrypt.gensalt());
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        // Encrypt the password using BCryptPasswordEncoder
+        var encryptedPassword = passwordEncoder.encode(user.user_password());
+        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip,user_password) values(?,?,?,?,?,?,?,?)")
+                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip(),user.user_password()))
+                .update();user.user_password();
 
         Assert.state(updated == 1, "Failed to create user: " + user.user_emailaddress());
     }
