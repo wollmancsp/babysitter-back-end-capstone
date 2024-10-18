@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public record User(
     Integer user_id,
     LocalDateTime user_created,
-    @Email String emailaddress,
+    @Email String user_emailaddress,
     String user_phone,
     @NotEmpty String user_fname,
     @NotEmpty String user_lname,
