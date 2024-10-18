@@ -18,4 +18,11 @@ public record User(
     Integer parent_id,
     Integer sitter_id,
     String user_password
-        ){}
+        ){
+        public CharSequence getUser_password() {
+                return this.user_password;
+        }
+
+        public void setUser_password(String hashedPassword) {
+        }
+}

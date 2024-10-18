@@ -15,13 +15,15 @@ public class UserRepository {
     private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final JdbcClient jdbcClient;
 
+
     public UserRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
 
     public List<User> findAllUsers() {
         return jdbcClient.sql("select * from user")
-                .query(User.class).list();
+                .query(User.class)
+                .list();
     }
 
     public Optional<User> findByEmail(String emailaddress) {

@@ -3,6 +3,7 @@ package com.findasitter.sitter.user;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:8080")
 public class UserController {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Lists all user accounts in database
@@ -37,6 +40,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     void create(@Valid @RequestBody User user) {
+        String hashedPassword = passwordEncoder.encode(user.getUser_password());
+        user.setUser_password(hashedPassword);
         userRepository.create(user);
     }
 
