@@ -24,22 +24,36 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String emailAddress) {
-        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = :user_emailaddress").param("user_emailaddress", emailAddress).query(User.class).optional();
+        return jdbcClient.sql("SELECT * FROM user WHERE emailaddress = :emailaddress").param("emailaddress", emailAddress).query(User.class).optional();
     }
 
     public void create(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(user_emailaddress,user_phone,user_fname,user_lname,user_address,user_city,user_zip) values(?,?,?,?,?,?,?)")
-                .params(List.of(user.user_emailaddress(),user.user_phone(),user.user_fname(),user.user_lname(),user.user_address(),user.user_city(),user.user_zip()))
+        var updated = jdbcClient.sql("INSERT INTO user(" +
+                        "user_id,user_created,emailaddress,user_phone,user_fname,user_lname," +
+                        "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
+                        "values(?,?,?,?,?,?,?,?,?,?,?,?)")
+                .params(List.of(
+                        user.user_id(),
+                        user.user_created(),
+                        user.emailaddress(),
+                        user.user_phone(),
+                        user.user_fname(),
+                        user.user_lname(),
+                        user.user_address(),
+                        user.user_city(),
+                        user.user_zip(),
+                        user.parent_id(),
+                        user.sitter_id(),
+                        user.user_password()))
                 .update();
-
-        Assert.state(updated == 1, "Failed to create user: " + user.user_emailaddress());
+        Assert.state(updated == 1, "Failed to create user: " + user.emailaddress());
     }
 
     public void update(User user, String email) {
-        var updated = jdbcClient.sql("update user set user_emailaddress = ?,user_phone = ?,user_fname = ?,user_lname = ?,user_address = ?,user_city = ?,user_zip = ? where user_emailaddress = ?")
-                .params(List.of(user.user_emailaddress(),user.user_phone(), user.user_fname(), user.user_lname(),user.user_address(),user.user_city(),user.user_zip(), email))
+        var updated = jdbcClient.sql("update user set emailaddress = ?,user_phone = ?,user_fname = ?,user_lname = ?,user_address = ?,user_city = ?,user_zip = ? where emailaddress = ?")
+                .params(List.of(user.emailaddress(),user.user_phone(), user.user_fname(), user.user_lname(),user.user_address(),user.user_city(),user.user_zip(), email))
                 .update();
 
-        Assert.state(updated == 1, "Failed to update user: " + user.user_emailaddress());
+        Assert.state(updated == 1, "Failed to update user: " + user.emailaddress());
     }
 }

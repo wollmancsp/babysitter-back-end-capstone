@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS payment (
 CREATE TABLE IF NOT EXISTS user (
                                     user_id INT AUTO_INCREMENT PRIMARY KEY,
                                     user_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                    user_emailaddress varchar(100),
+                                    emailaddress varchar(100),
                                     user_phone varchar(10),
                                     user_fname varchar(30),
                                     user_lname varchar(30),
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS user (
                                     user_zip varchar(5),
                                     parent_id int,
                                     sitter_id int,
-                                    UNIQUE (user_emailaddress)
+                                    UNIQUE (emailaddress)
 ) AUTO_INCREMENT=1000;
 CREATE TABLE IF NOT EXISTS chat (
                                     chat_id INT AUTO_INCREMENT PRIMARY KEY
