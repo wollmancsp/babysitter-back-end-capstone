@@ -19,7 +19,7 @@ public record User(
     Integer sitter_id,
     String user_password
         ){
-        public CharSequence getUser_password() {
+        public String getUser_password() {
                 return this.user_password;
         }
 

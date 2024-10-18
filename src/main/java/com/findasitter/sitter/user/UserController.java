@@ -3,6 +3,7 @@ package com.findasitter.sitter.user;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,17 @@ public class UserController {
         userRepository.create(user);
     }
 
+//    @PostMapping("/api/users/register")
+//    public ResponseEntity<String> registerUser(@RequestBody User user) {
+//        // Assume a UserService class exists to handle user registration logic
+//        if (userService.findByEmail(user.getEmailaddress()).isPresent()) {
+//            return ResponseEntity.badRequest().body("Email already in use");
+//        }
+//        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encrypt the password
+//        userService.save(user); // Save user to the database
+//        return ResponseEntity.ok("User registered successfully");
+//    }
+
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{email}")
@@ -52,4 +64,23 @@ public class UserController {
         userRepository.update(user, email);
     }
 
+    //we will need this eventually, do not delete!!
+
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+//
+//        if (userOptional.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//
+//        User user = userOptional.get();
+//
+//        // Verify the password
+//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
+//            return ResponseEntity.ok("Login successful");
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//    }
 }
