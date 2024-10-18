@@ -29,14 +29,12 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String emailaddress) {
-        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = emailaddress")
-                .param(List.of(emailaddress))
+        return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
+                .param(emailaddress)
                 .query(User.class).optional();
     }
 
     public void create(User user) {
-        System.out.println("User ID: " + user.user_id());
-        System.out.println("User Created: " + user.user_created());
         System.out.println("Email: " + user.user_emailaddress());
         System.out.println("Phone: " + user.user_phone());
         System.out.println("First Name: " + user.user_fname());
@@ -48,12 +46,10 @@ public class UserRepository {
         System.out.println("Sitter ID: " + user.sitter_id());
         System.out.println("Password: " + user.user_password());
         var updated = jdbcClient.sql("INSERT INTO user(" +
-                        "user_id,user_created,user_emailaddress,user_phone,user_fname,user_lname," +
+                        "user_emailaddress,user_phone,user_fname,user_lname," +
                         "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
-                        "values(?,?,?,?,?,?,?,?,?,?,?,?)")
+                        "values(?,?,?,?,?,?,?,?,?,?)")
                 .params(List.of(
-                        user.user_id(),
-                        user.user_created(),
                         user.user_emailaddress(),
                         user.user_phone(),
                         user.user_fname(),
