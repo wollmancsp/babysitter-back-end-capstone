@@ -35,33 +35,23 @@ public class UserRepository {
     }
 
     public void create(User user) {
-        System.out.println("Email: " + user.user_emailaddress());
-        System.out.println("Phone: " + user.user_phone());
-        System.out.println("First Name: " + user.user_fname());
-        System.out.println("Last Name: " + user.user_lname());
-        System.out.println("Address: " + user.user_address());
-        System.out.println("City: " + user.user_city());
-        System.out.println("ZIP: " + user.user_zip());
-        System.out.println("Parent ID: " + user.parent_id());
-        System.out.println("Sitter ID: " + user.sitter_id());
-        System.out.println("Password: " + user.user_password());
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
                         "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
                         "values(?,?,?,?,?,?,?,?,?,?)")
                 .params(List.of(
-                        user.user_emailaddress(),
-                        user.user_phone(),
-                        user.user_fname(),
-                        user.user_lname(),
-                        user.user_address(),
-                        user.user_city(),
-                        user.user_zip(),
-                        user.parent_id(),
-                        user.sitter_id(),
-                        user.user_password()))
+                        user.getUser_emailaddress(),
+                        user.getUser_phone(),
+                        user.getUser_fname(),
+                        user.getUser_lname(),
+                        user.getUser_address(),
+                        user.getUser_city(),
+                        user.getUser_zip(),
+                        user.getParent_id(),
+                        user.getSitter_id(),
+                        user.getUser_password()))
                 .update();
-        Assert.state(updated == 1, "Failed to create user: " + user.user_emailaddress());
+        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
     }
 
     public void update(User user, String email) {
@@ -78,18 +68,18 @@ public class UserRepository {
                     //  user.user_id(),
                     //  user.user_created(),
                         email,
-                        user.user_phone(),
-                        user.user_fname(),
-                        user.user_lname(),
-                        user.user_address(),
-                        user.user_city()
+                        user.getUser_phone(),
+                        user.getUser_fname(),
+                        user.getUser_lname(),
+                        user.getUser_address(),
+                        user.getUser_city()
 //                      user.user_zip(),
 //                      user.parent_id(),
 //                      user.sitter_id(),
 //                      user.user_password()
                          ))
                 .update();
-        Assert.state(updated == 1, "Failed to update user: " + user.user_emailaddress());
+        Assert.state(updated == 1, "Failed to update user: " + user.getUser_emailaddress());
     }
 
 }

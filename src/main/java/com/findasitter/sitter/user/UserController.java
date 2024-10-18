@@ -43,6 +43,7 @@ public class UserController {
     void create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
+        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
     }
 
