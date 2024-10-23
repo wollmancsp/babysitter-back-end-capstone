@@ -26,7 +26,9 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable())
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers("/users").permitAll()  // Allows unrestricted access to the /users endpoint
+                        .requestMatchers("/users/login").permitAll()
                         .anyRequest().authenticated()) // Other requests require authentication
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
