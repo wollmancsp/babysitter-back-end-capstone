@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers("/users").permitAll()  // Allows unrestricted access to the /users endpoint
-                        .requestMatchers("/").permitAll()
                         .requestMatchers("/users/login").permitAll()
+                        .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()) // Other requests require authentication
                 // .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
