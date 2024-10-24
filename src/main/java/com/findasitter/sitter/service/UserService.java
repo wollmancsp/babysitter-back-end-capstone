@@ -17,19 +17,18 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    // Existing register method
-    public User register(User user) {
-        user.setUser_password(encoder.encode(user.getUser_password()));
-        repo.save(user);
-        return user;
-    }
+//    // Existing register method
+//    public User register(User user) {
+//        user.setUser_password(encoder.encode(user.getUser_password()));
+//        repo.save(user);
+//        return user;
+//    }
 
     // New login method
     public boolean login(String email, String password) {
         Optional<User> userOptional = repo.findByEmail(email);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            // Check if the provided password matches the stored hashed password
             return encoder.matches(password, user.getUser_password());
         }
         return false;
