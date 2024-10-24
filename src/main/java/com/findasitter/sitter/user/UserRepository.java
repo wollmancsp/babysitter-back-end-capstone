@@ -82,24 +82,24 @@ public class UserRepository {
         Assert.state(updated == 1, "Failed to update user: " + user.getUser_emailaddress());
     }
 
-    public void save(User user) {
-        var updated = jdbcClient.sql("INSERT INTO user(" +
-                        "user_emailaddress, user_phone, user_fname, user_lname, " +
-                        "user_address, user_city, user_zip, parent_id, sitter_id, user_password) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-                .params(List.of(
-                        user.getUser_emailaddress(),
-                        user.getUser_phone(),
-                        user.getUser_fname(),
-                        user.getUser_lname(),
-                        user.getUser_address(),
-                        user.getUser_city(),
-                        user.getUser_zip(),
-                        user.getParent_id(),
-                        user.getSitter_id(),
-                        user.getUser_password()))
-                .update();
-        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
-    }
+//    public void save(User user) {
+//        var updated = jdbcClient.sql("INSERT INTO user(" +
+//                        "user_emailaddress, user_phone, user_fname, user_lname, " +
+//                        "user_address, user_city, user_zip, parent_id, sitter_id, user_password) " +
+//                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+//                .params(List.of(
+//                        user.getUser_emailaddress(),
+//                        user.getUser_phone(),
+//                        user.getUser_fname(),
+//                        user.getUser_lname(),
+//                        user.getUser_address(),
+//                        user.getUser_city(),
+//                        user.getUser_zip(),
+//                        user.getParent_id(),
+//                        user.getSitter_id(),
+//                        user.getUser_password()))
+//                .update();
+//        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
+//    }
 
 }
