@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers("/users").permitAll()  // Allows unrestricted access to the /users endpoint
+                        .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()) // Other requests require authentication
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
