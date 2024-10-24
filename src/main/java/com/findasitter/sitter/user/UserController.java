@@ -77,11 +77,29 @@ public class UserController {
 //
 //        User user = userOptional.get();
 //
-//        // Verify the password
+//        // check that the password matches
 //        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
 //            return ResponseEntity.ok("Login successful");
 //        } else {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
 //        }
 //    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+
+        User user = userOptional.get();
+
+        // check that the password matches
+        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+    }
 }
