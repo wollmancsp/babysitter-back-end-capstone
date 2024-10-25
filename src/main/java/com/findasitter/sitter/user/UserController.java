@@ -38,14 +38,24 @@ public class UserController {
         return run.get();
     }
     // Creates new user
-    @ResponseStatus(HttpStatus.CREATED)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PostMapping("/create")
+//    void create(@Valid @RequestBody User user) {
+//        String hashedPassword = passwordEncoder.encode(user.getUser_password());
+//        user.setUser_password(hashedPassword);
+//        System.out.println("Encrypted Password: " + hashedPassword);
+//        userRepository.create(user);
+//    }
+
     @PostMapping("/create")
-    void create(@Valid @RequestBody User user) {
+    public String create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
         System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
+        return "redirect:/";
     }
+
 
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
