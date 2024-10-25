@@ -23,17 +23,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(customizer -> customizer.disable())
+        return http
                 .authorizeRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
-                        .requestMatchers("/users").permitAll()  // Allows unrestricted access to the /users endpoint
-                        .requestMatchers("/users/login").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated()) // Other requests require authentication
-                // .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        // .requestMatchers(HttpMethod.POST, "/users").permitAll() // Allow user registration without login
+                        // .requestMatchers(HttpMethod.POST, "/users/login").permitAll() // Allow login without authentication
+                        .requestMatchers(HttpMethod.POST, "/users/create").permitAll()
+                        .requestMatchers("/", "/login", "/create").permitAll() // Allow unrestricted access to home page
+                        // .requestMatchers("/users").authenticated() // Only allow authenticated users to access /users
+                        .anyRequest().authenticated()) // All other endpoints require authentication
+                .formLogin(form -> form
+                        .loginPage("/login") // Specify custom login page
+                        .usernameParameter("user_emailaddress") // Use "user_emailaddress" instead of "username"
+                        .passwordParameter("password") // Keep the default password parameter
+                        .defaultSuccessUrl("/", true) // Redirect to home page on successful login
+                        .permitAll()) // Allow everyone to access the login page
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .build();
     }
 }
