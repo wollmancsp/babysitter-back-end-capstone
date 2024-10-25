@@ -8,6 +8,6 @@ public class CreateController {
 
     @GetMapping("/create")
     public String showCreateForm() {
-        return "create"; // This will serve the register.html file from templates
+        return "create"; // form to create a new user
     }
 }

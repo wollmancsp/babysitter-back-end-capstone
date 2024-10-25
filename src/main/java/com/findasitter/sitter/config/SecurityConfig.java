@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .passwordParameter("user_password") // Keep the default password parameter
                         .defaultSuccessUrl("/", true) // Redirect to home page on successful login
                         .permitAll()) // Allow everyone to access the login page
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .build();
     }
 }
