@@ -7,7 +7,16 @@ public class LoginRequest {
     public String getEmail() {
         return user_email;
     }
+
+    public void setEmail(String email) {
+        this.user_email = email;
+    }
+
     public String getPassword() {
         return user_password;
+    }
+
+    public void setPassword(String password) {
+        this.user_password = password;
     }
 }
