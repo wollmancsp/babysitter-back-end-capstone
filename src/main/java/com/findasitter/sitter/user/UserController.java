@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+import com.findasitter.sitter.config.JwtUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,12 +50,11 @@ public class UserController {
 //    }
 
     @PostMapping("/create")
-    public String create(@Valid @RequestBody User user) {
+    public RedirectView create(@Valid User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
-        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
-        return "redirect:/";
+        return new RedirectView("/");
     }
 
 
@@ -74,10 +75,9 @@ public class UserController {
         }
 
         User user = userOptional.get();
-
-        // check that the password matches
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-            return ResponseEntity.ok("Login successful");
+            String token = JwtUtil.generateToken(user.getUser_password());
+            return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
