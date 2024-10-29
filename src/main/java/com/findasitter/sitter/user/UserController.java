@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+import com.findasitter.sitter.config.JwtUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,14 +40,23 @@ public class UserController {
         return run.get();
     }
     // Creates new user
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    void create(@Valid @RequestBody User user) {
+//    @ResponseStatus(HttpStatus.CREATED)
+//    @PostMapping("/create")
+//    void create(@Valid @RequestBody User user) {
+//        String hashedPassword = passwordEncoder.encode(user.getUser_password());
+//        user.setUser_password(hashedPassword);
+//        System.out.println("Encrypted Password: " + hashedPassword);
+//        userRepository.create(user);
+//    }
+
+    @PostMapping("/create")
+    public RedirectView create(@Valid User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
-        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
+        return new RedirectView("/");
     }
+
 
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -64,10 +75,9 @@ public class UserController {
         }
 
         User user = userOptional.get();
-
-        // check that the password matches
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-            return ResponseEntity.ok("Login successful");
+            String token = JwtUtil.generateToken(user.getUser_password());
+            return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }

@@ -2,7 +2,6 @@ package com.findasitter.sitter.service;
 
 import com.findasitter.sitter.user.User;
 import com.findasitter.sitter.user.UserRepository;
-import com.findasitter.sitter.user.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
