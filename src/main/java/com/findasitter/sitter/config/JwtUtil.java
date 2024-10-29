@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class JwtUtil {
 
-    private String SECRET_KEY = "your_secret_key";
+    private static String SECRET_KEY = "babysitter"; // do I need to generate this or is this fine?
 
     public static String generateToken(String username) {
         return Jwts.builder()
