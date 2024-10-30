@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:8080")
+// @CrossOrigin("http://localhost:8080")
 public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -67,19 +67,39 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public User login(@RequestBody LoginRequest loginRequest) { //ResponseEntity<String>
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            System.out.println("Invalid email or password 1");
+            return null;
         }
 
         User user = userOptional.get();
+
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-            String token = JwtUtil.generateToken(user.getUser_password());
-            return ResponseEntity.ok(token);
+            System.out.println("Login successful");
+            return user;
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            System.out.println("Invalid email or password 2");
+            return null;
         }
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+//
+//        if (userOptional.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//
+//        User user = userOptional.get();
+//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
+//            String token = JwtUtil.generateToken(user.getUser_password());
+//            return ResponseEntity.ok(token);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//    }
 }
