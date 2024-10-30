@@ -66,20 +66,28 @@ public class UserController {
     }
 
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+@PostMapping("/login")
+    public User login(@RequestBody LoginRequest loginRequest) { //ResponseEntity<String>
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+//        System.out.println("Email: " + loginRequest.getEmail() + " Password: " + loginRequest.getPassword());
 
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            System.out.println("Invalid email or password 1");
+            return null;
         }
 
         User user = userOptional.get();
+
+        // check that the password matches
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-            String token = JwtUtil.generateToken(user.getUser_password());
-            return ResponseEntity.ok(token);
+//            return ResponseEntity.ok("Login successful");
+            System.out.println("Login successful");
+            return user;
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            System.out.println("Invalid email or password 2");
+            return null;
         }
     }
 }
