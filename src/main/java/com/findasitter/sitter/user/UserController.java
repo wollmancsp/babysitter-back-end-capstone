@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:8080")
+// @CrossOrigin("http://localhost:8080")
 public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -85,4 +85,21 @@ public class UserController {
             return null;
         }
     }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+//
+//        if (userOptional.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//
+//        User user = userOptional.get();
+//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
+//            String token = JwtUtil.generateToken(user.getUser_password());
+//            return ResponseEntity.ok(token);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//    }
 }
