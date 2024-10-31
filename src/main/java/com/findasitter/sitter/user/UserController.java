@@ -39,6 +39,16 @@ public class UserController {
         }
         return run.get();
     }
+
+    @PutMapping("/makeAdmin")
+    public ResponseEntity<String> makeAdmin(@RequestBody MakeAdminRequest request) {
+        try {
+            userRepository.makeAdmin(request.getUser_emailaddress());
+            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " has been made an admin.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user admin: " + request.getUser_emailaddress());
+        }
+    }
     // Creates new user
 //    @ResponseStatus(HttpStatus.CREATED)
 //    @PostMapping("/create")

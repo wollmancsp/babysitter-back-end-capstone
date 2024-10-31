@@ -34,6 +34,13 @@ public class UserRepository {
                 .query(User.class).optional();
     }
 
+    public void makeAdmin (String emailaddress) {
+        var updateRole = jdbcClient.sql("UPDATE user SET user_role = 0 WHERE user_emailaddress = ?")
+                .params(emailaddress)
+                .update();
+        Assert.state(updateRole == 1, "Failed to make user admin: " + emailaddress);
+    }
+
     public void create(User user) {
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
