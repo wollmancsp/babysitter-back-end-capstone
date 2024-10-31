@@ -20,8 +20,18 @@ public class User {
     private Integer parent_id;
     private Integer sitter_id;
     private String user_password;
+//    private Integer user_role = 1;
+//
+//
+//    // Getters and setters for all fields
+//    public Integer getUser_role() {
+//        return user_role;
+//    }
+//
+//    public void setUser_role(Integer user_role) {
+//        this.user_role = user_role;
+//    }
 
-    // Getters and setters for all fields
     public Integer getUser_id() {
         return user_id;
     }
