@@ -49,6 +49,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user admin: " + request.getUser_emailaddress());
         }
     }
+
+    @PutMapping("/demoteAdmin")
+    public ResponseEntity<String> demoteAdmin(@RequestBody DemoteAdminRequest request) {
+        try {
+            userRepository.demoteAdmin(request.getUser_emailaddress());
+            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " is no longer admin.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user non-admin: " + request.getUser_emailaddress());
+        }
+    }
     // Creates new user
 //    @ResponseStatus(HttpStatus.CREATED)
 //    @PostMapping("/create")

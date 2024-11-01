@@ -33,9 +33,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/makeAdmin", "/users/demoteAdmin").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create", "/create").permitAll()
                         .requestMatchers("/", "/login", "/create", "/error", "/users").permitAll() // Allow unrestricted access to home page
-                        .requestMatchers(HttpMethod.PUT, "/users/makeAdmin").permitAll()
                         .anyRequest().authenticated()) // All other endpoints require authentication
 //                .formLogin(form -> form
 //                        .loginPage("/login") // Specify custom login page
