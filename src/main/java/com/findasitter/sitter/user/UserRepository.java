@@ -116,4 +116,16 @@ public class UserRepository {
 //        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
 //    }
 
+    public void enableUser (String emailaddress) {
+        var setUserEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 1 WHERE user_emailaddress = ?")
+                .params(emailaddress)
+                .update();
+        Assert.state(setUserEnabled == 1, "Failed to enable user: " + emailaddress);
+    }
+    public void disableUser (String emailaddress) {
+        var setUserEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 0 WHERE user_emailaddress = ?")
+                .params(emailaddress)
+                .update();
+        Assert.state(setUserEnabled == 1, "Failed to disable user: " + emailaddress);
+    }
 }

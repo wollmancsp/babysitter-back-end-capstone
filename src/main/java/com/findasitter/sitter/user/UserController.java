@@ -33,11 +33,11 @@ public class UserController {
     // Searches database to find user record with a specified email address
     @GetMapping("{emailAddress}")
     User findById(@PathVariable String emailAddress) {
-        Optional<User> run = userRepository.findByEmail(emailAddress);
-        if (run.isEmpty()) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        if (userList.isEmpty()) {
             throw new UserNotFoundException();
         }
-        return run.get();
+        return userList.get();
     }
 
     @PutMapping("/makeAdmin")
@@ -105,6 +105,38 @@ public class UserController {
             return null;
         }
     }
+
+    // Disable user account in db
+//    @PutMapping("/enabledisable")
+//    public void enableDisable(@RequestBody DemoteAdminRequest request) {
+//        try {
+//            userRepository.demoteAdmin(request.getUser_emailaddress());
+//            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " is no longer admin.");
+//        } catch (IllegalStateException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user non-admin: " + request.getUser_emailaddress());
+//        }
+//    }
+    @GetMapping("/enableUser/{emailAddress}")
+    ResponseEntity<String> enableUser(@PathVariable String emailAddress) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        try {
+            userRepository.enableUser(emailAddress);
+            return ResponseEntity.ok(emailAddress + " has been enabled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to enable: " + emailAddress);
+        }
+    }
+    @GetMapping("/disableUser/{emailAddress}")
+    ResponseEntity<String> disableUser(@PathVariable String emailAddress) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        try {
+            userRepository.disableUser(emailAddress);
+            return ResponseEntity.ok(emailAddress + " has been disabled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable: " + emailAddress);
+        }
+    }
+
 
 //    @PostMapping("/login")
 //    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
