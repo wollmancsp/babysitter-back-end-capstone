@@ -40,8 +40,16 @@ public class UserController {
     }
     // Creates new user
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/CreateUser")
     void create(@Valid @RequestBody User user) {
+
+        System.out.println("ID: " + user.getUser_id() + "Created Time: " + user.getUser_created() +
+                "Email: " + user.getUser_emailaddress() + "Phone: " + user.getUser_phone() +
+                "Fname: " + user.getUser_fname() + "Lname: " + user.getUser_lname() + "Address: "
+                + user.getUser_address() + "City: " + user.getUser_city() + "Zip: " +
+                user.getUser_zip() + "Password: " + user.getUser_password() + "Role: " +
+                user.getUser_role() + "Enabled: " + user.getUser_enabled());
+
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
         System.out.println("Encrypted Password: " + hashedPassword);

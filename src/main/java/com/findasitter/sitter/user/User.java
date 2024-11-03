@@ -17,10 +17,9 @@ public class User {
     private String user_address;
     private String user_city;
     private String user_zip;
-    private Integer parent_id;
-    private Integer sitter_id;
     private String user_password;
     private Boolean user_role;
+    private Boolean user_enabled;
 
     // Getters and setters for all fields
     public Integer getUser_id() {
@@ -95,22 +94,6 @@ public class User {
         this.user_zip = user_zip;
     }
 
-    public Integer getParent_id() {
-        return parent_id;
-    }
-
-    public void setParent_id(Integer parent_id) {
-        this.parent_id = parent_id;
-    }
-
-    public Integer getSitter_id() {
-        return sitter_id;
-    }
-
-    public void setSitter_id(Integer sitter_id) {
-        this.sitter_id = sitter_id;
-    }
-
     public String getUser_password() {
         return user_password;
     }
@@ -127,7 +110,13 @@ public class User {
         this.user_role = user_role;
     }
 
+    public Boolean getUser_enabled() {
+        return user_enabled;
+    }
 
+    public void setUser_enabled(Boolean user_enabled) {
+        this.user_enabled = user_enabled;
+    }
 }
 
 
