@@ -28,6 +28,12 @@ public class UserRepository {
                 .list();
     }
 
+    public List<User> findByCity(String city) {
+        return jdbcClient.sql("SELECT * FROM user WHERE user_city = ?")
+                .param(city)
+                .query(User.class).list();
+    }
+
     public Optional<User> findByEmail(String emailaddress) {
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
                 .param(emailaddress)
@@ -37,16 +43,16 @@ public class UserRepository {
     public void create(User user) {
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
-                        "user_address,user_city,user_zip,user_password,user_role,user_enabled) " +
-                        "values(?,?,?,?,?,?,?,?,?,?)")
+                        "user_password,user_role,user_enabled) " +
+                        "values(?,?,?,?,?,?,?)")
                 .params(List.of(
                         user.getUser_emailaddress(),
                         user.getUser_phone(),
                         user.getUser_fname(),
                         user.getUser_lname(),
-                        user.getUser_address(),
-                        user.getUser_city(),
-                        user.getUser_zip(),
+//                        user.getUser_address(),
+//                        user.getUser_city(),
+//                        user.getUser_zip(),
                         user.getUser_password(),
                         user.getUser_role(),
                         user.getUser_enabled()))

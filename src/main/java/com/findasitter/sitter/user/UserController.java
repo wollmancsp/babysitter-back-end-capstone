@@ -30,6 +30,12 @@ public class UserController {
     }
 
     // Searches database to find user record with a specified email address
+    @GetMapping("SearchByCity/{city}")
+    List<User> SearchByCity(@PathVariable String city) {
+        return userRepository.findByCity(city);
+    }
+
+    // Searches database to find user record with a specified email address
     @GetMapping("{emailAddress}")
     User findById(@PathVariable String emailAddress) {
         Optional<User> run = userRepository.findByEmail(emailAddress);
