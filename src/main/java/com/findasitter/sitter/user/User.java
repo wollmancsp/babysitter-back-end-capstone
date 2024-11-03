@@ -20,6 +20,10 @@ public class User {
     private Integer parent_id;
     private Integer sitter_id;
     private String user_password;
+<<<<<<< Updated upstream
+=======
+    private Boolean user_role;
+>>>>>>> Stashed changes
 
     // Getters and setters for all fields
     public Integer getUser_id() {
@@ -118,6 +122,18 @@ public class User {
         this.user_password = user_password;
     }
 
+<<<<<<< Updated upstream
+=======
+    public Boolean getUser_role() {
+        return user_role;
+    }
+
+    public void setUser_role(Boolean user_role) {
+        this.user_role = user_role;
+    }
+
+
+>>>>>>> Stashed changes
 
 }
 

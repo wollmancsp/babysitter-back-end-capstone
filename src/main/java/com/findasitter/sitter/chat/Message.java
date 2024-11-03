@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 
 public record Message(
         Integer message_id,
-        @NotEmpty Integer user_id,
-        @NotEmpty String message_text,
+        Integer user_id,
+        String message_text,
         Timestamp message_time,
         Integer chat_id
 ) {}

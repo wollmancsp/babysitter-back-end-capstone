@@ -25,10 +25,24 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(customizer -> customizer.disable())
                 .authorizeRequests(auth -> auth
+<<<<<<< Updated upstream
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
                         .requestMatchers("/users").permitAll()  // Allows unrestricted access to the /users endpoint
                         .requestMatchers("/users/login").permitAll()
+=======
+                        .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                        .requestMatchers("/users/**").permitAll()  // Allows unrestricted access to the /users endpoint
+                        .requestMatchers("/users/login").permitAll()
+                        .requestMatchers("/message/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/message/**").permitAll()
+                        .requestMatchers("/message/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/message").permitAll()
+                        .requestMatchers("/message").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/message/UpdateChat").permitAll()
+                        .requestMatchers("/message/UpdateChat").permitAll()
+>>>>>>> Stashed changes
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()) // Other requests require authentication
                 // .httpBasic(Customizer.withDefaults())

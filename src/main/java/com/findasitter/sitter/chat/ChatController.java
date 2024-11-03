@@ -1,5 +1,6 @@
 package com.findasitter.sitter.chat;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -15,11 +16,6 @@ public class ChatController {
         this.chatRepository = messageRepository;
     }
 
-    @GetMapping("")
-    void temp() {
-
-    }
-
     // Searches database to find chats with a specific userID
     @GetMapping("{userID}")
     List<Chat> findAllChatsByUserID(@PathVariable Integer userID) {
@@ -27,17 +23,22 @@ public class ChatController {
         return chatRepository.findAllChatsByUserID(userID);
     }
 
-    // Searches database to find messages with a specific chatID
-//@GetMapping("{chatID}")
-//    List<Message> findAllMessagesByChatID(@PathVariable Integer chatID) {
-//        System.out.println("MSG: " + chatID);
-//    return messageRepository.findAllMessagesByChatID(chatID);
-//}
-//
-//    // new message added
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping
-//    void create(@Valid @RequestBody Message message) {
-//        messageRepository.create(message);
+//    @GetMapping("")
+//    String temp(){
+//        var cat = "temp";
+//        return cat;
 //    }
+
+    //Returns Chat based on requested Chat ID
+    @GetMapping("UpdateChat/{chatID}")
+    Chat returnChat(@PathVariable Integer chatID) {
+        return chatRepository.returnChat(chatID);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("")
+    void messageCreate(@RequestBody Message newMessage) {
+//        System.out.println("Message Received:" + newMessage.message_id() + " " + newMessage.user_id() + " " + newMessage.message_text() + " " + newMessage.message_time() + " " + newMessage.chat_id());
+        chatRepository.create(newMessage);
+    }
 }
