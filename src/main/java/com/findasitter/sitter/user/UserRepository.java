@@ -37,13 +37,8 @@ public class UserRepository {
     public void create(User user) {
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
-<<<<<<< Updated upstream
-                        "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
-                        "values(?,?,?,?,?,?,?,?,?,?)")
-=======
                         "user_address,user_city,user_zip,parent_id,sitter_id,user_password,user_role) " +
                         "values(?,?,?,?,?,?,?,?,?,?,?)")
->>>>>>> Stashed changes
                 .params(List.of(
                         user.getUser_emailaddress(),
                         user.getUser_phone(),
@@ -54,20 +49,15 @@ public class UserRepository {
                         user.getUser_zip(),
                         user.getParent_id(),
                         user.getSitter_id(),
-<<<<<<< Updated upstream
-                        user.getUser_password()))
-                .update();
-        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
-=======
                         user.getUser_password(),
                         user.getUser_role()))
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
     }
 
+
     public Optional<User> findByUserID(Integer userID) {
         return jdbcClient.sql("SELECT * FROM User WHERE user_ID = :userID").param("userID", userID).query(User.class).optional();
->>>>>>> Stashed changes
     }
 
     public void update(User user, String email) {

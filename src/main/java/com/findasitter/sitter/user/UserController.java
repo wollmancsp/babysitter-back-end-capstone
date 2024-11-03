@@ -55,15 +55,6 @@ public class UserController {
         userRepository.update(user, email);
     }
 
-<<<<<<< Updated upstream
-
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-=======
     //Find user by user_id
     @GetMapping("GetUserIDs/{userIDList}")
     List<User> findAllUserIDs(@PathVariable Integer[] userIDList) {
@@ -87,18 +78,12 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
             System.out.println("Invalid email or password 1");
             return null;
->>>>>>> Stashed changes
         }
 
         User user = userOptional.get();
 
         // check that the password matches
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-<<<<<<< Updated upstream
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-=======
 //            return ResponseEntity.ok("Login successful");
             System.out.println("Login successful");
             return user;
@@ -106,7 +91,6 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
             System.out.println("Invalid email or password 2");
             return null;
->>>>>>> Stashed changes
         }
     }
 }
