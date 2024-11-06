@@ -60,21 +60,13 @@ public class UserController {
         }
     }
     // Creates new user
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping("/create")
-//    void create(@Valid @RequestBody User user) {
-//        String hashedPassword = passwordEncoder.encode(user.getUser_password());
-//        user.setUser_password(hashedPassword);
-//        System.out.println("Encrypted Password: " + hashedPassword);
-//        userRepository.create(user);
-//    }
-
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public RedirectView create(@Valid User user) {
+    void create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
+        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
-        return new RedirectView("/");
     }
 
 
