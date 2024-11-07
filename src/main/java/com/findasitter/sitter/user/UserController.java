@@ -129,6 +129,26 @@ public class UserController {
         }
     }
 
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> updatePassword(@RequestParam String email, @RequestParam String currentPassword, @RequestParam String newPassword) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        User user = userOptional.get();
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getUser_password())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect.");
+        }
+
+        // Update to new password
+        userRepository.changePassword(email, newPassword);
+        return ResponseEntity.ok("Password updated successfully.");
+    }
+}
 
 //    @PostMapping("/login")
 //    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
@@ -146,4 +166,3 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
 //        }
 //    }
-}

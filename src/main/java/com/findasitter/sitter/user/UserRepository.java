@@ -2,6 +2,7 @@ package com.findasitter.sitter.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
@@ -66,6 +67,17 @@ public class UserRepository {
                         user.getUser_password()))
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
+    }
+
+    public void changePassword(String emailaddress, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        var updated = jdbcClient.sql("UPDATE user SET user_password = ? WHERE user_emailaddress = ?")
+                .params(encodedPassword, emailaddress)
+                .update();
+
+        Assert.state(updated == 1, "Failed to update password for user: " + emailaddress);
     }
 
     public void update(User user, String email) {
