@@ -24,4 +24,19 @@ public class TransactionController {
         //System.out.println("transactionCreate Called");
         transactionRepository.createTransaction(parentID, sitterID, details, LocalDateTime.parse(startDate), LocalDateTime.parse(endDate), pay);
     }
+
+    // Modify Status of Current Transaction
+    @PostMapping("/UpdateTransactionStatus")
+    Boolean UpdateTransactionStatus(@RequestBody @RequestParam("p0") Integer transactionID, @RequestParam("p1") Integer newStatus) {
+        System.out.println("UpdateTransactionStatus Called");
+        transactionRepository.modifyTransactionStatus(transactionID, newStatus);
+        return true;
+    }
+
+    //Returns Chat based on requested Chat ID
+    @GetMapping("/GetTransactionsByUserID/{userID}")
+    List<Transaction> GetTransactionsByUserID(@PathVariable Integer userID) {
+        return transactionRepository.GetTransactionsByUserID(userID);
+    }
+
 }

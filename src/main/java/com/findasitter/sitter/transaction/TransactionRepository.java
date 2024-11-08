@@ -1,6 +1,7 @@
 package com.findasitter.sitter.transaction;
 
-import com.findasitter.sitter.chat.Message;
+import com.findasitter.sitter.chat.Chat;
+import com.findasitter.sitter.user.User;
 import com.findasitter.sitter.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -27,5 +29,20 @@ public class TransactionRepository {
                 .update();
 
         Assert.state(updated == 1, "Failed to create transaction");
+    }
+
+    //Modify Status of Current Transaction
+    public void modifyTransactionStatus(Integer transactionID, Integer newStatus) {
+        if(newStatus == 1) {
+            //Accepted
+            var updated = jdbcClient.sql("UPDATE job SET job_status = ?, job_accepteddate = ? WHERE job_id = ?").params(List.of(newStatus, LocalDateTime.now(), transactionID)).update();
+        }else if(newStatus == 2) {
+            //Declined
+            var updated = jdbcClient.sql("UPDATE job SET job_status = ? WHERE job_id = ?").params(List.of(newStatus, transactionID)).update();
+        }
+    }
+
+    public List<Transaction> GetTransactionsByUserID(Integer userID) {
+        return jdbcClient.sql("SELECT * FROM job WHERE job_parent = :userID OR job_sitter = :userID").param("userID", userID).query(Transaction.class).stream().toList();
     }
 }
