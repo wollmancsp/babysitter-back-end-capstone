@@ -9,6 +9,8 @@ import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class ChatRepository {
@@ -16,6 +18,42 @@ public class ChatRepository {
     private final JdbcClient jdbcClient;
     public ChatRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
+    }
+
+    public boolean createNewChat(Integer id1, Integer id2) {
+        if(!UserAlreadyHasChat(id1, id2)) {
+            String[] chatIDList = jdbcClient.sql("SELECT * FROM chat")
+                    .query(String.class).stream().toArray(String[]::new);
+            Integer new_chat_id = chatIDList.length + 1;
+            System.out.println("NCID: " + new_chat_id);
+            var up0 = jdbcClient.sql("INSERT INTO chat(chat_id) values(?)")
+                    .params(List.of(new_chat_id)).update();
+            var up1 = jdbcClient.sql("INSERT INTO userchat(user_id, chat_id) values(?,?)")
+                    .params(List.of(id1, new_chat_id))
+                    .update();
+            var up2 = jdbcClient.sql("INSERT INTO userchat(user_id, chat_id) values(?,?)")
+                    .params(List.of(id2, new_chat_id))
+                    .update();
+        }else {
+            System.out.println("User already has chat");
+        }
+        return true;
+    }
+
+    //True means chat already exists between the two users
+    public boolean UserAlreadyHasChat(Integer id1, Integer id2) {
+        List<Integer> user1ChatIDs = jdbcClient.sql("SELECT chat_id FROM UserChat WHERE user_id = :userID").param("userID", id1).query(Integer.class).stream().toList();
+        //Yeah this is inefficient, blah blah blah. IT WORKS THO
+        List<Integer> allUsersInChatWithUser1 = new ArrayList<>();
+        for(Integer chatID : user1ChatIDs) {
+            List<Integer> oneChatUserIDs = jdbcClient.sql("SELECT user_id FROM UserChat WHERE chat_id = :chatID").param("chatID", chatID).query(Integer.class).stream().toList();
+            allUsersInChatWithUser1.addAll(oneChatUserIDs);
+        }
+        if(allUsersInChatWithUser1.contains(id2)) {
+            return true;
+        }else {
+            return false;
+        }
     }
 
     public Chat returnChat(Integer chatID) {

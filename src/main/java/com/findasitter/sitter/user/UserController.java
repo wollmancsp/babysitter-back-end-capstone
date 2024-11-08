@@ -29,10 +29,20 @@ public class UserController {
         return userRepository.findAllUsers();
     }
 
-    // Searches database to find user record with a specified email address
+    // Searches database to find user record with a specified city
     @GetMapping("SearchByCity/{city}")
     List<User> SearchByCity(@PathVariable String city) {
         return userRepository.findByCity(city);
+    }
+
+    // Searches database to find user record with a specified email address
+    @GetMapping("FindByUserID/{userID}")
+    User findByUserId(@PathVariable Integer userID) {
+        Optional<User> run = userRepository.findByUserID(userID);
+        if (run.isEmpty()) {
+            throw new UserNotFoundException();
+        }
+        return run.get();
     }
 
     // Searches database to find user record with a specified email address
@@ -44,6 +54,7 @@ public class UserController {
         }
         return run.get();
     }
+
     // Creates new user
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/CreateUser")
