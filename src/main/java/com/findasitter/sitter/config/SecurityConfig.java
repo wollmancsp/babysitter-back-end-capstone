@@ -35,7 +35,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/users/makeAdmin", "/users/demoteAdmin", "/users/changePassword").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create").permitAll()
-                        .requestMatchers("/", "/login", "/create", "/error", "/users", "/users/enableUser/{emailAddress}", "/users/disableUser/{emailAddress}").permitAll() // Allow unrestricted access to home page
+                        .requestMatchers("/", "/column-count/**", "/login", "/create", "/error", "/users", "/users/enableUser/{emailAddress}", "/users/disableUser/{emailAddress}").permitAll() // Allow unrestricted access to home page
                         .anyRequest().authenticated()) // All other endpoints require authentication
 //                .formLogin(form -> form
 //                        .loginPage("/login") // Specify custom login page
