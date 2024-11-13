@@ -3,6 +3,7 @@ package com.findasitter.sitter.chat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +13,21 @@ import static java.lang.Integer.parseInt;
 @RestController
 @RequestMapping("/message")
 @CrossOrigin("http://localhost:4200")
-
-
 public class ChatController {
     private final ChatRepository chatRepository;
 
     public ChatController(ChatRepository messageRepository) {
         this.chatRepository = messageRepository;
     }
+    //Returns Chat based on requested Chat ID
+    @GetMapping("TestSubscribe")
+    LocalDateTime returnTest() {
+        System.out.println("Hit");
+        return LocalDateTime.now();
+    }
 
     // Searches database to find chats with a specific userID
-    @GetMapping("{userID}")
+    @GetMapping("FindAllChats/{userID}")
     List<Chat> findAllChatsByUserID(@PathVariable Integer userID) {
 //        System.out.println("1: " + userID);
         return chatRepository.findAllChatsByUserID(userID);

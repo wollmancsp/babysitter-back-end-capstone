@@ -1,15 +1,22 @@
 package com.findasitter.sitter.user;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties.UiService.LOGGER;
 
 @Repository
 public class UserRepository {
@@ -21,6 +28,11 @@ public class UserRepository {
     public UserRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
+
+
+
+
+
 
     public List<User> findAllUsers() {
         return jdbcClient.sql("select * from user")

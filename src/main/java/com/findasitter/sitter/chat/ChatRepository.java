@@ -57,15 +57,15 @@ public class ChatRepository {
     }
 
     public Chat returnChat(Integer chatID) {
-        String[] userIDList = jdbcClient.sql("SELECT user_id FROM UserChat WHERE chat_id = :chatID").param("chatID", chatID).query(String.class).stream().toArray(String[]::new);
-        Message[] messageList = jdbcClient.sql("SELECT * FROM Message WHERE chat_id = :chatID").param("chatID", chatID).query(Message.class).stream().toArray(Message[]::new);
+        String[] userIDList = jdbcClient.sql("SELECT user_id FROM UserChat WHERE chat_id = :chatID").param("chatID", chatID).query(String.class).list().toArray(String[]::new);
+        Message[] messageList = jdbcClient.sql("SELECT * FROM Message WHERE chat_id = :chatID").param("chatID", chatID).query(Message.class).list().toArray(new Message[0]);
         return new Chat(chatID, userIDList, messageList);
     }
 
     public List<Chat> findAllChatsByUserID(Integer userID) {
         List<Chat> chatList = new ArrayList<>();
-        List<Integer> chatIDs = jdbcClient.sql("SELECT chat_id FROM UserChat WHERE user_id = :userID").param("userID", userID).query(Integer.class).stream().toList();
-        System.out.println("ChatID: " + chatIDs.getFirst());
+        List<Integer> chatIDs = jdbcClient.sql("SELECT chat_id FROM UserChat WHERE user_id = :userID").param("userID", userID).query(Integer.class).list();
+//        System.out.println("ChatID: " + chatIDs.getFirst());
         for(var chatID : chatIDs) {
             chatList.add(returnChat(chatID));
         }
