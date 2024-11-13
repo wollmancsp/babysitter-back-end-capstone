@@ -31,6 +31,9 @@ public class SecurityConfig {
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/PromoteUser").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/DeleteUser").permitAll()
+
                         .requestMatchers("/users/**").permitAll()  // Allows unrestricted access to the /users endpoint
                         .requestMatchers("/users/login").permitAll()
                         .requestMatchers("/message/**").permitAll()

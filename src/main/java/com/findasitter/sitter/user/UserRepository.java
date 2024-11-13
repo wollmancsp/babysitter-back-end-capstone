@@ -31,8 +31,23 @@ public class UserRepository {
 
 
 
+    public boolean DeleteUser(Integer userID) {
+        var updated = jdbcClient.sql("DELETE FROM user WHERE user_id = ?;").param(userID).update();
+        Assert.state(updated == 1, "Failed to update user: " + userID);
+        return true;
+    }
 
 
+    public boolean PromoteToAdmin(Integer userID) {
+        var updated = jdbcClient.sql("UPDATE user SET user_role = ? WHERE user_id = ?")
+                .params(List.of(
+                        1,
+                        userID
+                ))
+                .update();
+        Assert.state(updated == 1, "Failed to update user: " + userID);
+        return true;
+    }
 
     public List<User> findAllUsers() {
         return jdbcClient.sql("select * from user")
