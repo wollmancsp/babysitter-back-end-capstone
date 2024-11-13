@@ -34,8 +34,8 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/users/makeAdmin", "/users/demoteAdmin").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create", "/create").permitAll()
-                        .requestMatchers("/", "/login", "/create", "/error", "/users").permitAll() // Allow unrestricted access to home page
+                        .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create", "/users/PromoteUser", "/users/DeleteUser", "/create", "/message/ChatCreate", "/message/MessageCreate", "/message", "transaction/TransactionCreate", "transaction/UpdateTransactionStatus").permitAll()
+                        .requestMatchers("/", "/login", "/create", "/error", "/users", "users/FindByUserID/**", "/users/SearchByCity/**", "/message/FindAllChats/**", "users/GetUserIDs/**", "/message/MessageCreate", "/message/UpdateChat/**", "/transaction", "transaction/GetTransactionsByUserID/**").permitAll() // Allow unrestricted access to home page
                         .anyRequest().authenticated()) // All other endpoints require authentication
 //                .formLogin(form -> form
 //                        .loginPage("/login") // Specify custom login page
