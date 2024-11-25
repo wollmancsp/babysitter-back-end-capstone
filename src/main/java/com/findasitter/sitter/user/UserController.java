@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
@@ -115,6 +116,22 @@ public class UserController {
         return userRepository.ToggleUserEnabled(userEnabled, userID);
     }
 
+    //Toggles the User's enable variable
+//    @PostMapping("/setUserPFP")
+//    boolean SetPFP(@RequestBody @RequestParam("file") MultipartFile file, @RequestParam("p1") Integer userID) {
+//        System.out.println("File: " + file);
+//        System.out.println("P1: " + userID);
+//        return userRepository.setUserPFP(file, userID);
+//    }
+
+    //Toggles the User's enable variable
+    @PostMapping("/EditUserProfile")
+    boolean SetPFP(@RequestBody @RequestParam String userID, @RequestParam("image") MultipartFile file) {
+        System.out.println("File: " + file);
+        System.out.println("P1: " + userID);
+        return userRepository.setUserPFP(file, parseInt(userID));
+    }
+
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PutMapping("/{email}")
@@ -125,6 +142,7 @@ public class UserController {
 
     @PostMapping("/login")
     public User login(@RequestBody LoginRequest loginRequest) { //ResponseEntity<String>
+        System.out.println("Email: " + loginRequest.getEmail());
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOptional.isEmpty()) {

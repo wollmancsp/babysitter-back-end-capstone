@@ -1,16 +1,26 @@
 package com.findasitter.sitter.user;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.servlet.ServletContext;
+import jakarta.websocket.Decoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.*;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+import static java.sql.JDBCType.BLOB;
 @Repository
 public class UserRepository {
 
@@ -56,16 +66,50 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String emailaddress) {
+        System.out.println("Email: " + emailaddress);
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
                 .param(emailaddress)
                 .query(User.class).optional();
     }
 
-    public void makeAdmin (String emailaddress) {
+    public void makeAdmin(String emailaddress) {
         var updateRole = jdbcClient.sql("UPDATE user SET user_role = 0 WHERE user_emailaddress = ?")
                 .params(emailaddress)
                 .update();
         Assert.state(updateRole == 1, "Failed to make user admin: " + emailaddress);
+    }
+
+    @Autowired
+    ServletContext context;
+    public boolean setUserPFP(MultipartFile file, Integer userID) {
+        try {
+              InputStream inputStream = TypeReference.class.getResourceAsStream("/templates/Golden_star.jpg");
+
+
+            var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
+                    .params(inputStream, userID)
+                    .update();
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+//        catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        catch (IOException e) {
+//            System.out.println("Error uploading file");
+//            return false;
+//        }
+//        catch (SQLException e) {
+//            System.out.println("Error with SQL ");
+//            return false;
+//        }
+        return true;
+    }
+
+    public static Blob convertMultipartFileToBlob(MultipartFile file) throws IOException, SQLException {
+        return new SerialBlob(file.getBytes());
     }
 
     public Boolean ToggleUserEnabled (Boolean userEnabled, Integer userID) {
