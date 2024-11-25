@@ -68,6 +68,21 @@ public class UserRepository {
         Assert.state(updateRole == 1, "Failed to make user admin: " + emailaddress);
     }
 
+    public Boolean ToggleUserEnabled (Boolean userEnabled, Integer userID) {
+        System.out.println(userEnabled);
+        System.out.println("userID: " + userID);
+        if(userEnabled) {
+            var updateEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 0 WHERE user_id = ?")
+                    .params(userID)
+                    .update();
+        }else {
+            var updateEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 1 WHERE user_id = ?")
+                    .params(userID)
+                    .update();
+        }
+        return true;
+    }
+
     public void demoteAdmin (String emailaddress) {
         var updateRoles = jdbcClient.sql("UPDATE user SET user_role = 1 WHERE user_emailaddress = ?")
                 .params(emailaddress)
@@ -78,19 +93,16 @@ public class UserRepository {
     public void create(User user) {
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
-                        "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
-                        "values(?,?,?,?,?,?,?,?,?,?)")
+                        "user_password,user_role,user_enabled) " +
+                        "values(?,?,?,?,?,?,?)")
                 .params(List.of(
                         user.getUser_emailaddress(),
                         user.getUser_phone(),
                         user.getUser_fname(),
                         user.getUser_lname(),
-                        user.getUser_address(),
-                        user.getUser_city(),
-                        user.getUser_zip(),
-                        user.getParent_id(),
-                        user.getSitter_id(),
-                        user.getUser_password()))
+                        user.getUser_password(),
+                        user.getUser_role(),
+                        user.getUser_enabled()))
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
     }
@@ -106,41 +118,14 @@ public class UserRepository {
                         "user_zip = ?" +
                         " where emailaddress = ?")
                 .params(List.of(
-                    //  user.user_id(),
-                    //  user.user_created(),
                         email,
                         user.getUser_phone(),
                         user.getUser_fname(),
                         user.getUser_lname(),
                         user.getUser_address(),
                         user.getUser_city()
-//                      user.user_zip(),
-//                      user.parent_id(),
-//                      user.sitter_id(),
-//                      user.user_password()
                          ))
                 .update();
         Assert.state(updated == 1, "Failed to update user: " + user.getUser_emailaddress());
     }
-
-//    public void save(User user) {
-//        var updated = jdbcClient.sql("INSERT INTO user(" +
-//                        "user_emailaddress, user_phone, user_fname, user_lname, " +
-//                        "user_address, user_city, user_zip, parent_id, sitter_id, user_password) " +
-//                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-//                .params(List.of(
-//                        user.getUser_emailaddress(),
-//                        user.getUser_phone(),
-//                        user.getUser_fname(),
-//                        user.getUser_lname(),
-//                        user.getUser_address(),
-//                        user.getUser_city(),
-//                        user.getUser_zip(),
-//                        user.getParent_id(),
-//                        user.getSitter_id(),
-//                        user.getUser_password()))
-//                .update();
-//        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
-//    }
-
 }

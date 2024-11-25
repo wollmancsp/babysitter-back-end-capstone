@@ -109,6 +109,11 @@ public class UserController {
         return new RedirectView("/");
     }
 
+    //Toggles the User's enable variable
+    @PostMapping("/ToggleUserEnabled")
+    boolean ToggleUserEnabled(@RequestBody @RequestParam("p1") Boolean userEnabled, @RequestParam("p2") Integer userID) {
+        return userRepository.ToggleUserEnabled(userEnabled, userID);
+    }
 
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
