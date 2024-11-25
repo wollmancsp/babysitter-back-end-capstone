@@ -2,6 +2,7 @@ package com.findasitter.sitter.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
@@ -78,21 +79,32 @@ public class UserRepository {
     public void create(User user) {
         var updated = jdbcClient.sql("INSERT INTO user(" +
                         "user_emailaddress,user_phone,user_fname,user_lname," +
-                        "user_address,user_city,user_zip,parent_id,sitter_id,user_password) " +
-                        "values(?,?,?,?,?,?,?,?,?,?)")
+                        "user_password) " +
+                        "values(?,?,?,?,?)")
                 .params(List.of(
                         user.getUser_emailaddress(),
                         user.getUser_phone(),
                         user.getUser_fname(),
                         user.getUser_lname(),
-                        user.getUser_address(),
-                        user.getUser_city(),
-                        user.getUser_zip(),
-                        user.getParent_id(),
-                        user.getSitter_id(),
+                        //user.getUser_address(),
+                        //user.getUser_city(),
+                        //user.getUser_zip(),
+                        //user.getParent_id(),
+                        //user.getSitter_id(),
                         user.getUser_password()))
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
+    }
+
+    public void changePassword(String emailaddress, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        var updated = jdbcClient.sql("UPDATE user SET user_password = ? WHERE user_emailaddress = ?")
+                .params(encodedPassword, emailaddress)
+                .update();
+
+        Assert.state(updated == 1, "Failed to update password for user: " + emailaddress);
     }
 
     public void update(User user, String email) {
@@ -143,4 +155,16 @@ public class UserRepository {
 //        Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
 //    }
 
+    public void enableUser (String emailaddress) {
+        var setUserEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 1 WHERE user_emailaddress = ?")
+                .params(emailaddress)
+                .update();
+        Assert.state(setUserEnabled == 1, "Failed to enable user: " + emailaddress);
+    }
+    public void disableUser (String emailaddress) {
+        var setUserEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 0 WHERE user_emailaddress = ?")
+                .params(emailaddress)
+                .update();
+        Assert.state(setUserEnabled == 1, "Failed to disable user: " + emailaddress);
+    }
 }

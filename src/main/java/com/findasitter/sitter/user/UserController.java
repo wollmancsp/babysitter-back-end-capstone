@@ -52,11 +52,11 @@ public class UserController {
     // Searches database to find user record with a specified email address
     @GetMapping("{emailAddress}")
     User findById(@PathVariable String emailAddress) {
-        Optional<User> run = userRepository.findByEmail(emailAddress);
-        if (run.isEmpty()) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        if (userList.isEmpty()) {
             throw new UserNotFoundException();
         }
-        return run.get();
+        return userList.get();
     }
 
     // Searches database to find user record with a specified email address
@@ -102,11 +102,11 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public RedirectView create(@Valid User user) {
+    void create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
+        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
-        return new RedirectView("/");
     }
 
 
@@ -137,4 +137,72 @@ public class UserController {
             return null;
         }
     }
+
+    // Disable user account in db
+//    @PutMapping("/enabledisable")
+//    public void enableDisable(@RequestBody DemoteAdminRequest request) {
+//        try {
+//            userRepository.demoteAdmin(request.getUser_emailaddress());
+//            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " is no longer admin.");
+//        } catch (IllegalStateException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user non-admin: " + request.getUser_emailaddress());
+//        }
+//    }
+    @GetMapping("/enableUser/{emailAddress}")
+    ResponseEntity<String> enableUser(@PathVariable String emailAddress) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        try {
+            userRepository.enableUser(emailAddress);
+            return ResponseEntity.ok(emailAddress + " has been enabled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to enable: " + emailAddress);
+        }
+    }
+    @GetMapping("/disableUser/{emailAddress}")
+    ResponseEntity<String> disableUser(@PathVariable String emailAddress) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        try {
+            userRepository.disableUser(emailAddress);
+            return ResponseEntity.ok(emailAddress + " has been disabled.");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable: " + emailAddress);
+        }
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> updatePassword(@RequestParam String email, @RequestParam String currentPassword, @RequestParam String newPassword) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        User user = userOptional.get();
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getUser_password())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect.");
+        }
+
+        // Update to new password
+        userRepository.changePassword(email, newPassword);
+        return ResponseEntity.ok("Password updated successfully.");
+    }
 }
+
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+//
+//        if (userOptional.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//
+//        User user = userOptional.get();
+//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
+//            String token = JwtUtil.generateToken(user.getUser_password());
+//            return ResponseEntity.ok(token);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+//        }
+//    }
