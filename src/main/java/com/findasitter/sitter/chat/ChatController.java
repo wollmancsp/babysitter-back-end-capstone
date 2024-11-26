@@ -1,13 +1,12 @@
 package com.findasitter.sitter.chat;
-
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+
+import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("/message")
 @CrossOrigin("http://localhost:4200")
-
-
 public class ChatController {
     private final ChatRepository chatRepository;
 
@@ -15,29 +14,27 @@ public class ChatController {
         this.chatRepository = messageRepository;
     }
 
-    @GetMapping("")
-    void temp() {
-
-    }
-
     // Searches database to find chats with a specific userID
-    @GetMapping("{userID}")
+    @GetMapping("FindAllChats/{userID}")
     List<Chat> findAllChatsByUserID(@PathVariable Integer userID) {
 //        System.out.println("1: " + userID);
         return chatRepository.findAllChatsByUserID(userID);
     }
 
-    // Searches database to find messages with a specific chatID
-//@GetMapping("{chatID}")
-//    List<Message> findAllMessagesByChatID(@PathVariable Integer chatID) {
-//        System.out.println("MSG: " + chatID);
-//    return messageRepository.findAllMessagesByChatID(chatID);
-//}
-//
-//    // new message added
-//    @ResponseStatus(HttpStatus.CREATED)
-//    @PostMapping
-//    void create(@Valid @RequestBody Message message) {
-//        messageRepository.create(message);
-//    }
+    //Creates a row for Chat, and 2 for UserChat
+    @PostMapping("/ChatCreate")
+    void chatCreate(@RequestBody @RequestParam("p1") String id1, @RequestParam("p2") String id2) {
+        chatRepository.createNewChat(parseInt(id1), parseInt(id2));
+    }
+
+    //Returns Chat based on requested Chat ID
+    @GetMapping("UpdateChat/{chatID}")
+    Chat returnChat(@PathVariable Integer chatID) {
+        return chatRepository.returnChat(chatID);
+    }
+
+    @PostMapping("")
+    void messageCreate(@RequestBody Message newMessage) {
+        chatRepository.create(newMessage);
+    }
 }
