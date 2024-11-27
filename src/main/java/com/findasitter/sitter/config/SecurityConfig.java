@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/users/makeAdmin", "/users/demoteAdmin").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/makeAdmin", "/users/demoteAdmin", "/users/changePassword").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create", "/users/PromoteUser", "/users/EditUserProfile","/users/DeleteUser", "/users/ToggleUserEnabled", "/users/createTestPasswords", "/create", "/message/ChatCreate", "/message/MessageCreate", "/message", "transaction/TransactionCreate", "transaction/UpdateTransactionStatus").permitAll()
                         .requestMatchers("/", "/login", "/create", "/error", "/users", "users/RandomSearchByCity", "users/FindByUserID/**", "/users/SearchByCity/**", "/users/ReturnPfp/**", "/message/FindAllChats/**", "users/GetUserIDs/**", "/message/MessageCreate", "/message/UpdateChat/**", "/transaction", "transaction/GetTransactionsByUserID/**").permitAll() // Allow unrestricted access to home page
                         .anyRequest().authenticated()) // All other endpoints require authentication

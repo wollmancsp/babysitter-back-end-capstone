@@ -213,4 +213,24 @@ public class UserController {
             return null;
         }
     }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> updatePassword(@RequestBody @RequestParam("email") String email, @RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        }
+
+        User user = userOptional.get();
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getUser_password())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect.");
+        }
+
+        // Update to new password
+        userRepository.changePassword(email, newPassword);
+        return ResponseEntity.ok("Password updated successfully.");
+    }
 }

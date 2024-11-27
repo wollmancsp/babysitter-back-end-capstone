@@ -5,6 +5,7 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
@@ -231,5 +232,17 @@ public class UserRepository {
         }else {
             System.out.println("Error: User does not exist!");
         }
+    }
+
+
+    public void changePassword(String emailaddress, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        var updated = jdbcClient.sql("UPDATE user SET user_password = ? WHERE user_emailaddress = ?")
+                .params(encodedPassword, emailaddress)
+                .update();
+
+        Assert.state(updated == 1, "Failed to update password for user: " + emailaddress);
     }
 }
