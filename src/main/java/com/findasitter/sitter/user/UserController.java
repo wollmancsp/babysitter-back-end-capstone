@@ -1,5 +1,9 @@
 package com.findasitter.sitter.user;
+import jakarta.validation.Path;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +26,7 @@ import static java.lang.Integer.parseInt;
 public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String pfpDir = "uploads";
 
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -42,6 +51,12 @@ public class UserController {
     @GetMapping("SearchByCity/{city}")
     List<User> SearchByCity(@PathVariable String city) {
         return userRepository.findByCity(city);
+    }
+
+    // Returns 6 random sitters for the initial FAB popup screen.
+    @GetMapping("RandomSearchByCity")
+    List<User> RandomSearchByCity() {
+        return userRepository.RandomSearchByCity();
     }
 
     // Lists all user accounts in database
@@ -110,6 +125,16 @@ public class UserController {
         return new RedirectView("/");
     }
 
+    //For generating test passwords for users.
+    @PostMapping("/createTestPasswords")
+    public List<String> createTestPasswords(@RequestBody List<String> passwords) {
+        List<String> testPasswords = new ArrayList<>();
+        for (String password : passwords) {
+            testPasswords.add(passwordEncoder.encode(password));
+        }
+        return testPasswords;
+    }
+
     //Toggles the User's enable variable
     @PostMapping("/ToggleUserEnabled")
     boolean ToggleUserEnabled(@RequestBody @RequestParam("p1") Boolean userEnabled, @RequestParam("p2") Integer userID) {
@@ -126,10 +151,38 @@ public class UserController {
 
     //Toggles the User's enable variable
     @PostMapping("/EditUserProfile")
-    boolean SetPFP(@RequestBody @RequestParam String userID, @RequestParam("image") MultipartFile file) {
-        System.out.println("File: " + file);
-        System.out.println("P1: " + userID);
-        return userRepository.setUserPFP(file, parseInt(userID));
+    boolean SetPFP(@RequestBody User user) { // throws IOException
+        //@RequestBody @RequestParam String userID, @RequestParam("image") MultipartFile file, @RequestParam("fileName") String fileName
+//        System.out.println("File: " + file);
+//        System.out.println("P1: " + userID);
+
+//        String fileLocation = new File("src\\main\\resources\\profilePictures").getAbsolutePath() + "\\" + fileName;
+//        System.out.println("Path: " + fileLocation);
+//        FileOutputStream fos = new FileOutputStream(fileLocation);
+//        fos.write(file.getBytes());
+//        fos.close();
+//        return userRepository.setUserPFP(file, parseInt(userID));
+        System.out.println("Yep");
+        userRepository.nonBlankUpdate(user);
+        return true;
+    }
+
+    //Toggles the User's enable variable
+    @Autowired
+    ResourceLoader resourceLoader;
+    @GetMapping("/ReturnPfp/{fileName}")
+    File GetPFP(@PathVariable String fileName) throws IOException {
+//        System.out.println("File: " + fileName);
+
+        String fileLocation = new File("src\\main\\resources\\profilePictures").getAbsolutePath() + "\\" + fileName;
+//        InputStream fis = new FileInputStream(fileLocation);
+        Resource classPathResource = resourceLoader.getResource("classpath:profilePictures/" + fileName);
+//        return userRepository.setUserPFP(file, parseInt(userID));
+//        if(classPathResource.exists()) {
+//            System.out.println("Found!" + classPathResource.getFile().getPath());
+//        }
+
+        return classPathResource.getFile();
     }
 
     // Updates existing user with specified email address

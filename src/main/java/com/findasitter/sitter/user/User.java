@@ -24,7 +24,7 @@ public class User {
     private String user_password;
     private Boolean user_role;
     private Boolean user_enabled;
-    private Byte[] user_profilepicture;
+    private String user_profilepicture;
 
     // Getters and setters for all fields
     public Integer getUser_id() {
@@ -122,11 +122,11 @@ public class User {
     public void setUser_enabled(Boolean user_enabled) {
         this.user_enabled = user_enabled;
     }
-    public Byte[] getUser_profilepicture() {
+    public String getUser_profilepicture() {
         return user_profilepicture;
     }
 
-    public void setUser_profilepicture(Byte[] user_profilepicture) {
+    public void setUser_profilepicture(String user_profilepicture) {
         this.user_profilepicture = user_profilepicture;
     }
 }

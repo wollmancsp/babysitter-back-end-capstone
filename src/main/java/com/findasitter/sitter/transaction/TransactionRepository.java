@@ -37,6 +37,6 @@ public class TransactionRepository {
     }
 
     public List<Transaction> GetTransactionsByUserID(Integer userID) {
-        return jdbcClient.sql("SELECT * FROM job WHERE job_parent = :userID OR job_sitter = :userID").param("userID", userID).query(Transaction.class).stream().toList();
+        return jdbcClient.sql("SELECT * FROM job WHERE job_parent = :userID OR job_sitter = :userID").param("userID", userID).query(Transaction.class).list();
     }
 }
