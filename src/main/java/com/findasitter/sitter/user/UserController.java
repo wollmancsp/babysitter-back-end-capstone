@@ -1,5 +1,4 @@
 package com.findasitter.sitter.user;
-import jakarta.validation.Path;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -9,15 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import static java.lang.Integer.parseInt;
 
 @RestController
@@ -90,7 +86,6 @@ public class UserController {
         return userRepository.DeleteUser(parseInt(userID));
     }
 
-    /* MERGE */
     @PostMapping("/PromoteUser")
     boolean PromoteToAdmin(@RequestBody @RequestParam("p1") String userID) {
         return userRepository.PromoteToAdmin(parseInt(userID));
@@ -104,9 +99,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user admin: " + request.getUser_emailaddress());
         }
     }
-    /* MERGE */
 
-    /* ADD */
     @PutMapping("/demoteAdmin")
     public ResponseEntity<String> demoteAdmin(@RequestBody DemoteAdminRequest request) {
         try {
@@ -117,12 +110,22 @@ public class UserController {
         }
     }
 
-    @PostMapping("/create")
-    public RedirectView create(@Valid User user) {
+    // Creates new user
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/CreateUser")
+    void create(@Valid @RequestBody User user) {
+
+        System.out.println("ID: " + user.getUser_id() + "Created Time: " + user.getUser_created() +
+                "Email: " + user.getUser_emailaddress() + "Phone: " + user.getUser_phone() +
+                "Fname: " + user.getUser_fname() + "Lname: " + user.getUser_lname() + "Address: "
+                + user.getUser_address() + "City: " + user.getUser_city() + "Zip: " +
+                user.getUser_zip() + "Password: " + user.getUser_password() + "Role: " +
+                user.getUser_role() + "Enabled: " + user.getUser_enabled());
+
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
+        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
-        return new RedirectView("/");
     }
 
     //For generating test passwords for users.
@@ -142,47 +145,18 @@ public class UserController {
     }
 
     //Toggles the User's enable variable
-//    @PostMapping("/setUserPFP")
-//    boolean SetPFP(@RequestBody @RequestParam("file") MultipartFile file, @RequestParam("p1") Integer userID) {
-//        System.out.println("File: " + file);
-//        System.out.println("P1: " + userID);
-//        return userRepository.setUserPFP(file, userID);
-//    }
-
-    //Toggles the User's enable variable
-    @PostMapping("/EditUserProfile")
-    boolean SetPFP(@RequestBody User user) { // throws IOException
-        //@RequestBody @RequestParam String userID, @RequestParam("image") MultipartFile file, @RequestParam("fileName") String fileName
-//        System.out.println("File: " + file);
-//        System.out.println("P1: " + userID);
-
-//        String fileLocation = new File("src\\main\\resources\\profilePictures").getAbsolutePath() + "\\" + fileName;
-//        System.out.println("Path: " + fileLocation);
-//        FileOutputStream fos = new FileOutputStream(fileLocation);
-//        fos.write(file.getBytes());
-//        fos.close();
-//        return userRepository.setUserPFP(file, parseInt(userID));
-        System.out.println("Yep");
-        userRepository.nonBlankUpdate(user);
-        return true;
+    @PostMapping("/setUserPFP")
+    boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
+        //System.out.println("File: " + file);
+        //System.out.println("P1: " + userID);
+        return userRepository.setUserPFP(file, userID);
     }
 
     //Toggles the User's enable variable
-    @Autowired
-    ResourceLoader resourceLoader;
-    @GetMapping("/ReturnPfp/{fileName}")
-    File GetPFP(@PathVariable String fileName) throws IOException {
-//        System.out.println("File: " + fileName);
-
-        String fileLocation = new File("src\\main\\resources\\profilePictures").getAbsolutePath() + "\\" + fileName;
-//        InputStream fis = new FileInputStream(fileLocation);
-        Resource classPathResource = resourceLoader.getResource("classpath:profilePictures/" + fileName);
-//        return userRepository.setUserPFP(file, parseInt(userID));
-//        if(classPathResource.exists()) {
-//            System.out.println("Found!" + classPathResource.getFile().getPath());
-//        }
-
-        return classPathResource.getFile();
+    @PostMapping("/EditUserProfile")
+    boolean SetPFP(@RequestBody User user) {
+        userRepository.nonBlankUpdate(user);
+        return true;
     }
 
     // Updates existing user with specified email address

@@ -13,6 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
@@ -85,18 +89,67 @@ public class UserRepository {
     @Autowired
     ServletContext context;
     public boolean setUserPFP(MultipartFile file, Integer userID) {
-        try {
-              InputStream inputStream = TypeReference.class.getResourceAsStream("/templates/43.jpg");
 
+
+        try {
+//            var UPLOAD_DIR = "public/profilePicture/";
+
+            byte[] imageByteArray = file.getBytes();
+            String fileName = userID + "." + file.getOriginalFilename().split("\\.")[1];
+            String fileNameWithoutExtension = userID.toString();
+
+            //
+            String basePath = new File("src\\main\\resources\\public\\profilePicture").getAbsolutePath();
+            Path dirPath = Paths.get(basePath);
+
+            if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
+                throw new IllegalArgumentException("Invalid directory path: " + basePath);
+            }
+
+            // Use DirectoryStream to filter files with the matching name
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, fileNameWithoutExtension + ".*")) {
+                for (Path file2 : stream) {
+                    System.out.println("Poss File: " + file2.getFileName().toString());
+                    var ext = file.getOriginalFilename().split("\\.")[1];
+                    if (ext.equals("png") || ext.equals("jpg") || ext.equals("jpeg") || ext.equals("gif")) {
+                        System.out.println("Deleted: " + file2.getFileName());
+                        Files.delete(file2);
+                    }
+                }
+            }
+            //
+
+
+            String fileLocation = basePath + "\\" + fileName;
+            System.out.println("FN: " + fileLocation);
+            FileOutputStream fos = new FileOutputStream(fileLocation);
+            fos.write(imageByteArray);
+            fos.close();
 
             var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
-                    .params(inputStream, userID)
+                    .params(fileName, userID)
                     .update();
-            return true;
+
+            // Get the file and save it
+//            byte[] bytes = file.getBytes();
+//            Path path = Paths.get(UPLOAD_DIR + file.getOriginalFilename());
+//            Files.write(path, bytes);
+        } catch (Exception e) {
+            System.out.println("Error uploading file: " + e.getMessage());
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+//        try {
+//              InputStream inputStream = TypeReference.class.getResourceAsStream("/templates/43.jpg");
+//
+//
+//            var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
+//                    .params(inputStream, userID)
+//                    .update();
+//            return true;
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        catch (FileNotFoundException e) {
 //            e.printStackTrace();
 //        }
@@ -187,28 +240,28 @@ public class UserRepository {
             User newUser = oldUser.get();
             if(user.getUser_phone() != null) {
                 newUser.setUser_phone(user.getUser_phone());
-                System.out.println("1" + user.getUser_phone());
+                //System.out.println("1" + user.getUser_phone());
             }
-            System.out.println("1.1" + user.getUser_phone());
+            //System.out.println("1.1" + user.getUser_phone());
             if(user.getUser_fname()  !=  null) {
                 newUser.setUser_fname(user.getUser_fname());
-                System.out.println("2");
+                //System.out.println("2");
             }
             if(user.getUser_lname()  !=  null) {
                 newUser.setUser_lname(user.getUser_lname());
-                System.out.println("3");
+                //System.out.println("3");
             }
             if(user.getUser_address() != null) {
                 newUser.setUser_address(user.getUser_address());
-                System.out.println("4");
+                //System.out.println("4");
             }
             if(user.getUser_city() !=  null) {
                 newUser.setUser_city(user.getUser_city());
-                System.out.println("5");
+                //System.out.println("5");
             }
             if(user.getUser_zip() !=  null) {
                 newUser.setUser_zip(user.getUser_zip());
-                System.out.println("6");
+                //System.out.println("6");
             }
 
             var updated = jdbcClient.sql("update user set " +
