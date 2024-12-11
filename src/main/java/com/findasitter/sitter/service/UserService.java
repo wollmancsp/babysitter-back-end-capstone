@@ -16,13 +16,6 @@ public class UserService {
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-//    // Existing register method
-//    public User register(User user) {
-//        user.setUser_password(encoder.encode(user.getUser_password()));
-//        repo.save(user);
-//        return user;
-//    }
-
     // New login method
     public boolean login(String email, String password) {
         Optional<User> userOptional = repo.findByEmail(email);

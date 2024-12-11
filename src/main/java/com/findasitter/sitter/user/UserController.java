@@ -1,28 +1,24 @@
 package com.findasitter.sitter.user;
+
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
 import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(FRONT_END_PORT)
 public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final String pfpDir = "uploads";
 
     public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -90,6 +86,7 @@ public class UserController {
     boolean PromoteToAdmin(@RequestBody @RequestParam("p1") String userID) {
         return userRepository.PromoteToAdmin(parseInt(userID));
     }
+
     @PutMapping("/makeAdmin")
     public ResponseEntity<String> makeAdmin(@RequestBody MakeAdminRequest request) {
         try {
@@ -114,17 +111,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/CreateUser")
     void create(@Valid @RequestBody User user) {
-
-        System.out.println("ID: " + user.getUser_id() + "Created Time: " + user.getUser_created() +
-                "Email: " + user.getUser_emailaddress() + "Phone: " + user.getUser_phone() +
-                "Fname: " + user.getUser_fname() + "Lname: " + user.getUser_lname() + "Address: "
-                + user.getUser_address() + "City: " + user.getUser_city() + "Zip: " +
-                user.getUser_zip() + "Password: " + user.getUser_password() + "Role: " +
-                user.getUser_role() + "Enabled: " + user.getUser_enabled());
-
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
-        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
     }
 
@@ -147,8 +135,6 @@ public class UserController {
     //Toggles the User's enable variable
     @PostMapping("/setUserPFP")
     boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
-        //System.out.println("File: " + file);
-        //System.out.println("P1: " + userID);
         return userRepository.setUserPFP(file, userID);
     }
 
@@ -171,7 +157,6 @@ public class UserController {
     public User login(@RequestBody LoginRequest loginRequest) { //ResponseEntity<String>
         System.out.println("Email: " + loginRequest.getEmail());
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
         if (userOptional.isEmpty()) {
             System.out.println("Invalid email or password 1");
             return null;

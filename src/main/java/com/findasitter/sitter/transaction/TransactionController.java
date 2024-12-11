@@ -3,9 +3,11 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
+
 @RestController
 @RequestMapping("/transaction")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(FRONT_END_PORT)
 public class TransactionController {
     private final TransactionRepository transactionRepository;
     public TransactionController(TransactionRepository transactionRepository) {

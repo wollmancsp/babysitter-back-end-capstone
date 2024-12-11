@@ -1,6 +1,5 @@
 package com.findasitter.sitter.user;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.*;
 import java.nio.file.DirectoryStream;
@@ -20,7 +18,6 @@ import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -73,7 +70,6 @@ public class UserRepository {
     }
 
     public Optional<User> findByEmail(String emailaddress) {
-        System.out.println("Email: " + emailaddress);
         return jdbcClient.sql("SELECT * FROM user WHERE user_emailaddress = ?")
                 .param(emailaddress)
                 .query(User.class).optional();
@@ -89,16 +85,12 @@ public class UserRepository {
     @Autowired
     ServletContext context;
     public boolean setUserPFP(MultipartFile file, Integer userID) {
-
-
         try {
-//            var UPLOAD_DIR = "public/profilePicture/";
-
             byte[] imageByteArray = file.getBytes();
             String fileName = userID + "." + file.getOriginalFilename().split("\\.")[1];
             String fileNameWithoutExtension = userID.toString();
 
-            //
+            //Preset absolute path for profile images
             String basePath = new File("src\\main\\resources\\public\\profilePicture").getAbsolutePath();
             Path dirPath = Paths.get(basePath);
 
@@ -109,68 +101,30 @@ public class UserRepository {
             // Use DirectoryStream to filter files with the matching name
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, fileNameWithoutExtension + ".*")) {
                 for (Path file2 : stream) {
-                    System.out.println("Poss File: " + file2.getFileName().toString());
+                    //Use these comments to see if some weird delete bug happens.
+                    //System.out.println("Poss File: " + file2.getFileName().toString());
                     var ext = file.getOriginalFilename().split("\\.")[1];
                     if (ext.equals("png") || ext.equals("jpg") || ext.equals("jpeg") || ext.equals("gif")) {
-                        System.out.println("Deleted: " + file2.getFileName());
+                        //System.out.println("Deleted: " + file2.getFileName());
                         Files.delete(file2);
                     }
                 }
             }
-            //
-
 
             String fileLocation = basePath + "\\" + fileName;
-            System.out.println("FN: " + fileLocation);
             FileOutputStream fos = new FileOutputStream(fileLocation);
             fos.write(imageByteArray);
             fos.close();
-
             var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
                     .params(fileName, userID)
                     .update();
-
-            // Get the file and save it
-//            byte[] bytes = file.getBytes();
-//            Path path = Paths.get(UPLOAD_DIR + file.getOriginalFilename());
-//            Files.write(path, bytes);
         } catch (Exception e) {
             System.out.println("Error uploading file: " + e.getMessage());
         }
-
-//        try {
-//              InputStream inputStream = TypeReference.class.getResourceAsStream("/templates/43.jpg");
-//
-//
-//            var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
-//                    .params(inputStream, userID)
-//                    .update();
-//            return true;
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        catch (IOException e) {
-//            System.out.println("Error uploading file");
-//            return false;
-//        }
-//        catch (SQLException e) {
-//            System.out.println("Error with SQL ");
-//            return false;
-//        }
         return true;
     }
 
-    public static Blob convertMultipartFileToBlob(MultipartFile file) throws IOException, SQLException {
-        return new SerialBlob(file.getBytes());
-    }
-
     public Boolean ToggleUserEnabled (Boolean userEnabled, Integer userID) {
-        System.out.println(userEnabled);
-        System.out.println("userID: " + userID);
         if(userEnabled) {
             var updateEnabled = jdbcClient.sql("UPDATE user SET user_enabled = 0 WHERE user_id = ?")
                     .params(userID)
@@ -240,28 +194,21 @@ public class UserRepository {
             User newUser = oldUser.get();
             if(user.getUser_phone() != null) {
                 newUser.setUser_phone(user.getUser_phone());
-                //System.out.println("1" + user.getUser_phone());
             }
-            //System.out.println("1.1" + user.getUser_phone());
             if(user.getUser_fname()  !=  null) {
                 newUser.setUser_fname(user.getUser_fname());
-                //System.out.println("2");
             }
             if(user.getUser_lname()  !=  null) {
                 newUser.setUser_lname(user.getUser_lname());
-                //System.out.println("3");
             }
             if(user.getUser_address() != null) {
                 newUser.setUser_address(user.getUser_address());
-                //System.out.println("4");
             }
             if(user.getUser_city() !=  null) {
                 newUser.setUser_city(user.getUser_city());
-                //System.out.println("5");
             }
             if(user.getUser_zip() !=  null) {
                 newUser.setUser_zip(user.getUser_zip());
-                //System.out.println("6");
             }
 
             var updated = jdbcClient.sql("update user set " +

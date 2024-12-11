@@ -2,10 +2,6 @@ package com.findasitter.sitter.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.websocket.Decoder;
-
-import java.awt.*;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 
 public class User {
