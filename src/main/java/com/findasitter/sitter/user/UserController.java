@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
+import static com.findasitter.sitter.constants.GlobalConstants.IDE_BASE_PATH;
 import static java.lang.Integer.parseInt;
 
 @RestController
@@ -101,7 +102,7 @@ public class UserController {
         ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
         for (String allowedFileType : allowedFileTypes) {
             //in = getClass().getResourceAsStream("/public/profilePicture/" + userID + "." + allowedFileType);
-            in = new FileInputStream("C:\\Users\\Phillip\\Downloads\\babysitter-back-end-capstone\\target\\" + userID + "." + allowedFileType);
+            in = new FileInputStream(IDE_BASE_PATH + "target\\" + userID + "." + allowedFileType);
             //System.out.println("Test: " + Paths.get("").toAbsolutePath().toString());
             //C:\Users\Phillip\Downloads\babysitter-back-end-capstone
 
