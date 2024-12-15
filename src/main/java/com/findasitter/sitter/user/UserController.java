@@ -1,14 +1,27 @@
 package com.findasitter.sitter.user;
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
 import static java.lang.Integer.parseInt;
@@ -37,6 +50,110 @@ public class UserController {
             throw new UserNotFoundException();
         }
         return usersList;
+    }
+
+    //Works
+    //Security: "/users/get-image-dynamic-type/**
+    @GetMapping("/get-image-dynamic-type/{jpg}")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> getImageDynamicType(@PathVariable boolean jpg) {
+        MediaType contentType = jpg ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
+        InputStream in = jpg ?
+                getClass().getResourceAsStream("/public/profilePicture/43.jpg") :
+                getClass().getResourceAsStream("/public/profilePicture/51.jpg");
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .body(new InputStreamResource(in));
+    }
+    //End Of Works
+
+//    //Request Profile Picture
+//    @GetMapping("/getPfp/{userID}")
+//    public ResponseEntity<InputStreamResource> getPfp(@PathVariable Integer userID) {
+//        InputStream in = null;
+//        MediaType contentType = null;
+//        ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
+//        for (String allowedFileType : allowedFileTypes) {
+//            in = getClass().getResourceAsStream("/public/profilePicture/" + userID + "." + allowedFileType);
+//            if (in != null) {
+//                contentType = returnMediaType(allowedFileType);
+//                break;
+//            }
+//        }
+//        if(in != null && contentType != null) {
+//            return ResponseEntity.ok()
+//                    .contentType(contentType)
+//                    .body(new InputStreamResource(in));
+//        }else {
+//            return null;
+//        }
+//    }
+    ///users/getPfp/**
+
+    //Request Profile Picture
+    @GetMapping("/getPfp")
+    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID,
+                                                      @RequestParam("param2") BigInteger DateTimeUpdated) throws FileNotFoundException {
+        //userRepository.fixPFP();
+
+        InputStream in = null;
+        MediaType contentType = null;
+        ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
+        for (String allowedFileType : allowedFileTypes) {
+            //in = getClass().getResourceAsStream("/public/profilePicture/" + userID + "." + allowedFileType);
+            in = new FileInputStream("C:\\Users\\Phillip\\Downloads\\babysitter-back-end-capstone\\target\\" + userID + "." + allowedFileType);
+            //System.out.println("Test: " + Paths.get("").toAbsolutePath().toString());
+            //C:\Users\Phillip\Downloads\babysitter-back-end-capstone
+
+            System.out.println("IN: " + in.toString());
+            if (in != null) {
+                contentType = returnMediaType(allowedFileType);
+                break;
+            }
+        }
+        if(in != null && contentType != null) {
+            return ResponseEntity.ok()
+                    .contentType(contentType)
+                    .body(new InputStreamResource(in));
+        }else {
+            return null;
+        }
+    }
+
+//    //Request Profile Picture
+//    @GetMapping("/getPfp")
+//    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID,
+//                                                      @RequestParam("param2") BigInteger DateTimeUpdated) {
+//        //userRepository.fixPFP();
+//
+//        InputStream in = null;
+//        MediaType contentType = null;
+//
+//        byte[] byteArray = userRepository.newGetPFP(parseInt(userID));
+//        Resource resource = new ByteArrayResource(byteArray);
+//        //in = getClass().getResourceAsStream(String.valueOf(resource));
+//        in = new ByteArrayInputStream(byteArray);
+//        if(resource != null) {
+//            //contentType = MediaType.parseMediaType(resource.getFilename());
+//            contentType = MediaType.IMAGE_JPEG;
+//        }
+//        if(in != null && contentType != null) {
+//            return ResponseEntity.ok()
+//                    .contentType(contentType)
+//                    .body(new InputStreamResource(in));
+//        }else {
+//            System.out.println("Resource Error : " + in);
+//            return null;
+//        }
+//    }
+
+    public MediaType returnMediaType(String stringType) {
+        if(Objects.equals(stringType, "jpg") || Objects.equals(stringType, "jpeg"))
+            return MediaType.IMAGE_JPEG;
+        else if(Objects.equals(stringType, "png"))
+            return MediaType.IMAGE_PNG;
+        else
+            return null;
     }
 
     // Searches database to find user record with a specified city
@@ -135,6 +252,7 @@ public class UserController {
     //Toggles the User's enable variable
     @PostMapping("/setUserPFP")
     boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
+        userRepository.fixPFP(file, userID);
         return userRepository.setUserPFP(file, userID);
     }
 

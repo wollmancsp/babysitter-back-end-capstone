@@ -4,11 +4,13 @@ import jakarta.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.*;
 import java.nio.file.DirectoryStream;
@@ -17,6 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +30,7 @@ public class UserRepository {
     private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final JdbcClient jdbcClient;
 
-
+    @Autowired
     public UserRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
@@ -82,8 +86,99 @@ public class UserRepository {
         Assert.state(updateRole == 1, "Failed to make user admin: " + emailaddress);
     }
 
+//    public byte[] newGetPFP(Integer userID) {
+//        try {
+////            Blob blob = jdbcClient.sql("SELECT profilePictureBlob FROM user WHERE user_id = ?")
+////                    .param(userID)
+////                    .query(Blob.class).single();
+////            System.out.println("BLOB L: " + blob.toString());
+////            return blob.getBinaryStream().readAllBytes();
+//
+//
+////            var temp = jdbcClient.sql("SELECT profilePictureBlob FROM user WHERE user_id = ?")
+////                    .param(userID)
+////                    .query(Byte[].class);
+//
+////            var temp = jdbcClient.sql("SELECT profilePictureBlob FROM user WHERE user_id = ?")
+////                    .param(userID)
+////                    .query(Byte[].class);
+//////            Object[] = temp.stream().toArray();
+////
+////            try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+////                 ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+////                oos.writeObject(temp.stream().toArray());  // Serialize the object
+////                System.out.println("Test: " + bos.size());
+//////                for (byte b : bos.toByteArray()) {
+//////                    System.out.print(b + " ");
+//////                }
+//////                System.out.println();  // New line
+////                return bos.toByteArray();
+//            } catch (Exception e) {
+//                throw new RuntimeException("Error during object serialization", e);
+//            }
+//
+////            byte[] result = convert2DTo1D((Byte[][]) temp.stream().toArray());
+////            System.out.println(java.util.Arrays.toString(result));
+//            //System.out.println("BLOB L: " + Arrays.deepToString(temp.stream().toArray()));
+//
+//
+//            //return temp.stream().toArray();
+////            System.out.println("BLOB L: " + blob.toString());
+////
+////            if(blob.isPresent()) {
+////                Blob newBlob = blob.get();
+////                return newBlob.getBinaryStream().readAllBytes();
+////            }else {
+////                return null;
+////            }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return null;
+//    }
+
+//    public byte[] convert2DTo1D(Byte[][] byteObjects) {
+//        if (byteObjects == null) {
+//            return new byte[0];
+//        }
+//
+//        // Calculate the total size
+//        int totalLength = 0;
+//        for (Byte[] row : byteObjects) {
+//            totalLength += row.length;
+//        }
+//
+//        // Flatten the array
+//        byte[] result = new byte[totalLength];
+//        int index = 0;
+//        for (Byte[] row : byteObjects) {
+//            for (Byte b : row) {
+//                result[index++] = (b != null) ? b : 0;  // Handle null safely
+//            }
+//        }
+//        return result;
+//    }
+
+    public boolean fixPFP(MultipartFile file, Integer userID) {
+        try {
+          //InputStream inputStream = getClass().getResourceAsStream("/templates/43.jpg");
+            InputStream inputStream = new ByteArrayInputStream(file.getBytes());
+            //Blob blob = new SerialBlob(file.getBytes());
+
+            var updateRole = jdbcClient.sql("UPDATE user SET profilepictureBlob = ? WHERE user_id = ?")
+                .params(inputStream, userID)
+                .update();
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     @Autowired
     ServletContext context;
+    @CacheEvict(value ="user" ,allEntries = true)
     public boolean setUserPFP(MultipartFile file, Integer userID) {
         try {
             byte[] imageByteArray = file.getBytes();
@@ -91,7 +186,8 @@ public class UserRepository {
             String fileNameWithoutExtension = userID.toString();
 
             //Preset absolute path for profile images
-            String basePath = new File("src\\main\\resources\\public\\profilePicture").getAbsolutePath();
+            //Kinda Works: String basePath = new File("src\\main\\resources\\public\\profilePicture").getAbsolutePath();
+            String basePath = new File("target").getAbsolutePath();
             Path dirPath = Paths.get(basePath);
 
             if (!Files.exists(dirPath) || !Files.isDirectory(dirPath)) {
@@ -118,6 +214,8 @@ public class UserRepository {
             var updateRole = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
                     .params(fileName, userID)
                     .update();
+
+
         } catch (Exception e) {
             System.out.println("Error uploading file: " + e.getMessage());
         }
