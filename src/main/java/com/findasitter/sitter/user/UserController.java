@@ -1,5 +1,6 @@
 package com.findasitter.sitter.user;
 
+import java.nio.file.Files;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -53,61 +54,16 @@ public class UserController {
         return usersList;
     }
 
-    //Works
-    //Security: "/users/get-image-dynamic-type/**
-    @GetMapping("/get-image-dynamic-type/{jpg}")
-    @ResponseBody
-    public ResponseEntity<InputStreamResource> getImageDynamicType(@PathVariable boolean jpg) {
-        MediaType contentType = jpg ? MediaType.IMAGE_JPEG : MediaType.IMAGE_PNG;
-        InputStream in = jpg ?
-                getClass().getResourceAsStream("/public/profilePicture/43.jpg") :
-                getClass().getResourceAsStream("/public/profilePicture/51.jpg");
-        return ResponseEntity.ok()
-                .contentType(contentType)
-                .body(new InputStreamResource(in));
-    }
-    //End Of Works
-
-//    //Request Profile Picture
-//    @GetMapping("/getPfp/{userID}")
-//    public ResponseEntity<InputStreamResource> getPfp(@PathVariable Integer userID) {
-//        InputStream in = null;
-//        MediaType contentType = null;
-//        ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
-//        for (String allowedFileType : allowedFileTypes) {
-//            in = getClass().getResourceAsStream("/public/profilePicture/" + userID + "." + allowedFileType);
-//            if (in != null) {
-//                contentType = returnMediaType(allowedFileType);
-//                break;
-//            }
-//        }
-//        if(in != null && contentType != null) {
-//            return ResponseEntity.ok()
-//                    .contentType(contentType)
-//                    .body(new InputStreamResource(in));
-//        }else {
-//            return null;
-//        }
-//    }
-    ///users/getPfp/**
-
     //Request Profile Picture
     @GetMapping("/getPfp")
-    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID,
-                                                      @RequestParam("param2") BigInteger DateTimeUpdated) throws FileNotFoundException {
-        //userRepository.fixPFP();
-
+    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID, @RequestParam("param2") BigInteger DateTimeUpdated) throws FileNotFoundException {
+        InputStream inBackUp = new FileInputStream(IDE_BASE_PATH + "defaultUserAvatar.png");
         InputStream in = null;
         MediaType contentType = null;
         ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
         for (String allowedFileType : allowedFileTypes) {
-            //in = getClass().getResourceAsStream("/public/profilePicture/" + userID + "." + allowedFileType);
-            in = new FileInputStream(IDE_BASE_PATH + "target\\" + userID + "." + allowedFileType);
-            //System.out.println("Test: " + Paths.get("").toAbsolutePath().toString());
-            //C:\Users\Phillip\Downloads\babysitter-back-end-capstone
-
-            System.out.println("IN: " + in.toString());
-            if (in != null) {
+            if(Files.exists(Paths.get(IDE_BASE_PATH + userID + "." + allowedFileType))) {
+                in = new FileInputStream(IDE_BASE_PATH + userID + "." + allowedFileType);
                 contentType = returnMediaType(allowedFileType);
                 break;
             }
@@ -117,36 +73,18 @@ public class UserController {
                     .contentType(contentType)
                     .body(new InputStreamResource(in));
         }else {
-            return null;
+            //If no file exists, return default img.
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(new InputStreamResource(inBackUp));
         }
     }
 
-//    //Request Profile Picture
-//    @GetMapping("/getPfp")
-//    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID,
-//                                                      @RequestParam("param2") BigInteger DateTimeUpdated) {
-//        //userRepository.fixPFP();
-//
-//        InputStream in = null;
-//        MediaType contentType = null;
-//
-//        byte[] byteArray = userRepository.newGetPFP(parseInt(userID));
-//        Resource resource = new ByteArrayResource(byteArray);
-//        //in = getClass().getResourceAsStream(String.valueOf(resource));
-//        in = new ByteArrayInputStream(byteArray);
-//        if(resource != null) {
-//            //contentType = MediaType.parseMediaType(resource.getFilename());
-//            contentType = MediaType.IMAGE_JPEG;
-//        }
-//        if(in != null && contentType != null) {
-//            return ResponseEntity.ok()
-//                    .contentType(contentType)
-//                    .body(new InputStreamResource(in));
-//        }else {
-//            System.out.println("Resource Error : " + in);
-//            return null;
-//        }
-//    }
+    //Toggles the User's enable variable
+    @PostMapping("/setUserPFP")
+    boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
+        return userRepository.setUserPFP(file, userID);
+    }
 
     public MediaType returnMediaType(String stringType) {
         if(Objects.equals(stringType, "jpg") || Objects.equals(stringType, "jpeg"))
@@ -248,13 +186,6 @@ public class UserController {
     @PostMapping("/ToggleUserEnabled")
     boolean ToggleUserEnabled(@RequestBody @RequestParam("p1") Boolean userEnabled, @RequestParam("p2") Integer userID) {
         return userRepository.ToggleUserEnabled(userEnabled, userID);
-    }
-
-    //Toggles the User's enable variable
-    @PostMapping("/setUserPFP")
-    boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
-        userRepository.fixPFP(file, userID);
-        return userRepository.setUserPFP(file, userID);
     }
 
     //Toggles the User's enable variable

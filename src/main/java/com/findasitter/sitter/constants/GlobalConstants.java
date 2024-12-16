@@ -2,5 +2,7 @@ package com.findasitter.sitter.constants;
 
 public class GlobalConstants {
     public static final String FRONT_END_PORT = "http://localhost:4200";
-    public static final String IDE_BASE_PATH = "ADD\\Path\\HERE";
+
+    //Ex: C:\\Users\\Username\\Documents\\target\\
+    public static final String IDE_BASE_PATH = "C:\\Users\\Phillip\\Downloads\\babysitter-back-end-capstone\\target\\profilePicture\\";
 }
