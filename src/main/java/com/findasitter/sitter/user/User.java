@@ -2,6 +2,7 @@ package com.findasitter.sitter.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+
 import java.time.LocalDateTime;
 
 public class User {
@@ -20,7 +21,7 @@ public class User {
     private String user_password;
     private Boolean user_role;
     private Boolean user_enabled;
-    private String user_profilepicture;
+    private String user_aboutme;
 
     // Getters and setters for all fields
     public Integer getUser_id() {
@@ -118,11 +119,11 @@ public class User {
     public void setUser_enabled(Boolean user_enabled) {
         this.user_enabled = user_enabled;
     }
-    public String getUser_profilepicture() {
-        return user_profilepicture;
+    public String getUser_aboutme() {
+        return user_aboutme;
     }
 
-    public void setUser_profilepicture(String user_profilepicture) {
-        this.user_profilepicture = user_profilepicture;
+    public void setUser_aboutme(String user_aboutme) {
+        this.user_aboutme = user_aboutme;
     }
 }

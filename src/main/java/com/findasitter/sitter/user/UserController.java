@@ -2,11 +2,7 @@ package com.findasitter.sitter.user;
 
 import java.nio.file.Files;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +10,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;

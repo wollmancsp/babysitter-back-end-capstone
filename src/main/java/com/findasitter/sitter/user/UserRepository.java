@@ -177,6 +177,7 @@ public class UserRepository {
                         "user_address = ?," +
                         "user_city = ?," +
                         "user_zip = ?" +
+                        "user_aboutme = ?" +
                         " where emailaddress = ?")
                 .params(List.of(
                         email,
@@ -186,6 +187,7 @@ public class UserRepository {
                         user.getUser_address(),
                         user.getUser_city(),
                         user.getUser_zip(),
+                        user.getUser_aboutme(),
                         email
                          ))
                 .update();
@@ -217,6 +219,9 @@ public class UserRepository {
             if(user.getUser_zip() !=  null) {
                 newUser.setUser_zip(user.getUser_zip());
             }
+            if(user.getUser_aboutme() !=  null) {
+                newUser.setUser_aboutme(user.getUser_aboutme());
+            }
 
             var updated = jdbcClient.sql("update user set " +
                             "user_phone = ?," +
@@ -224,7 +229,8 @@ public class UserRepository {
                             "user_lname = ?," +
                             "user_address = ?," +
                             "user_city = ?," +
-                            "user_zip = ?" +
+                            "user_zip = ?," +
+                            "user_aboutme = ?" +
                             " where user_id = ?")
                     .params(List.of(
                             newUser.getUser_phone(),
@@ -233,6 +239,7 @@ public class UserRepository {
                             newUser.getUser_address(),
                             newUser.getUser_city(),
                             newUser.getUser_zip(),
+                            newUser.getUser_aboutme(),
                             user.getUser_id()
                     ))
                     .update();
