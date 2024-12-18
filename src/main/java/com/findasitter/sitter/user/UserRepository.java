@@ -87,12 +87,6 @@ public class UserRepository {
     @CacheEvict(value ="user" ,allEntries = true)
     public boolean setUserPFP(MultipartFile file, Integer userID) {
         try {
-            InputStream inputStream = new ByteArrayInputStream(file.getBytes());
-            var update1 = jdbcClient.sql("UPDATE user SET profilepictureBlob = ? WHERE user_id = ?")
-                    .params(inputStream, userID)
-                    .update();
-
-
             byte[] imageByteArray = file.getBytes();
             String fileName = userID + "." + file.getOriginalFilename().split("\\.")[1];
             String fileNameWithoutExtension = userID.toString();
@@ -120,11 +114,6 @@ public class UserRepository {
             FileOutputStream fos = new FileOutputStream(fileLocation);
             fos.write(imageByteArray);
             fos.close();
-            var update2 = jdbcClient.sql("UPDATE user SET user_profilepicture = ? WHERE user_id = ?")
-                    .params(fileName, userID)
-                    .update();
-
-
         } catch (Exception e) {
             System.out.println("Error uploading file: " + e.getMessage());
         }
