@@ -138,16 +138,6 @@ public class UserController {
         }
     }
 
-    // Disable user account in db
-//    @PutMapping("/enabledisable")
-//    public void enableDisable(@RequestBody DemoteAdminRequest request) {
-//        try {
-//            userRepository.demoteAdmin(request.getUser_emailaddress());
-//            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " is no longer admin.");
-//        } catch (IllegalStateException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user non-admin: " + request.getUser_emailaddress());
-//        }
-//    }
     @GetMapping("/enableUser/{emailAddress}")
     ResponseEntity<String> enableUser(@PathVariable String emailAddress) {
         Optional<User> userList = userRepository.findByEmail(emailAddress);
@@ -189,20 +179,3 @@ public class UserController {
         return ResponseEntity.ok("Password updated successfully.");
     }
 }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-//
-//        if (userOptional.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//
-//        User user = userOptional.get();
-//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-//            String token = JwtUtil.generateToken(user.getUser_password());
-//            return ResponseEntity.ok(token);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//    }

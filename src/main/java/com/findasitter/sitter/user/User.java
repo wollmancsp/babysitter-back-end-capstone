@@ -17,11 +17,8 @@ public class User {
     private String user_address;
     private String user_city;
     private String user_zip;
-    //private Integer parent_id;
-    //private Integer sitter_id;
     private String user_password;
 
-    // Getters and setters for all fields
     public Integer getUser_id() {
         return user_id;
     }
@@ -94,22 +91,6 @@ public class User {
         this.user_zip = user_zip;
     }
 
-//    public Integer getParent_id() {
-//        return parent_id;
-//    }
-//
-//    public void setParent_id(Integer parent_id) {
-//        this.parent_id = parent_id;
-//    }
-//
-//    public Integer getSitter_id() {
-//        return sitter_id;
-//    }
-//
-//    public void setSitter_id(Integer sitter_id) {
-//        this.sitter_id = sitter_id;
-//    }
-
     public String getUser_password() {
         return user_password;
     }
@@ -117,35 +98,4 @@ public class User {
     public void setUser_password(String user_password) {
         this.user_password = user_password;
     }
-
-
 }
-
-
-//package com.findasitter.sitter.user;
-//
-//import jakarta.validation.constraints.Email;
-//import jakarta.validation.constraints.NotEmpty;
-//
-//import java.time.LocalDateTime;
-//
-//public record User(
-//        Integer user_id,
-//        LocalDateTime user_created,
-//        @Email String user_emailaddress,
-//        String user_phone,
-//        @NotEmpty String user_fname,
-//        @NotEmpty String user_lname,
-//        String user_address,
-//        String user_city,
-//        String user_zip,
-//        Integer parent_id,
-//        Integer sitter_id,
-//        String user_password
-//){
-//    public String getUser_password() {
-//        return this.user_password;
-//    }
-//
-//    public void setUser_password(String hashedPassword) {
-//    }

@@ -37,12 +37,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/create", "/users/PromoteUser", "/users/DeleteUser", "/create", "/message/ChatCreate", "/message/MessageCreate", "/message", "transaction/TransactionCreate", "transaction/UpdateTransactionStatus").permitAll()
                         .requestMatchers("/", "/column-count/**", "/users/enableUser/{emailAddress}", "/users/disableUser/{emailAddress}", "/login", "/create", "/error", "/users", "users/FindByUserID/**", "/users/SearchByCity/**", "/message/FindAllChats/**", "users/GetUserIDs/**", "/message/MessageCreate", "/message/UpdateChat/**", "/transaction", "transaction/GetTransactionsByUserID/**").permitAll() // Allow unrestricted access to home page
                         .anyRequest().authenticated()) // All other endpoints require authentication
-//                .formLogin(form -> form
-//                        .loginPage("/login") // Specify custom login page
-//                        .usernameParameter("user_emailaddress") // Use "user_emailaddress" instead of "username"
-//                        .passwordParameter("user_password") // Keep the default password parameter
-//                        .defaultSuccessUrl("/", true) // Redirect to home page on successful login
-//                        .permitAll()) // Allow everyone to access the login page
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
