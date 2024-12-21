@@ -112,6 +112,7 @@ public class User {
         this.user_role = user_role;
     }
 
+
     public Boolean getUser_enabled() {
         return user_enabled;
     }

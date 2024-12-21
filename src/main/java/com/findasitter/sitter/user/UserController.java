@@ -109,11 +109,11 @@ public class UserController {
     // Searches database to find user record with a specified email address
     @GetMapping("{emailAddress}")
     User findById(@PathVariable String emailAddress) {
-        Optional<User> run = userRepository.findByEmail(emailAddress);
-        if (run.isEmpty()) {
+        Optional<User> userList = userRepository.findByEmail(emailAddress);
+        if (userList.isEmpty()) {
             throw new UserNotFoundException();
         }
-        return run.get();
+        return userList.get();
     }
 
     // Searches database to find user record with a specified email address
@@ -159,9 +159,11 @@ public class UserController {
     // Creates new user
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/CreateUser")
+
     void create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
+        System.out.println("Encrypted Password: " + hashedPassword);
         userRepository.create(user);
     }
 
@@ -218,6 +220,7 @@ public class UserController {
 
     @PutMapping("/changePassword")
     public ResponseEntity<String> updatePassword(@RequestBody @RequestParam("email") String email, @RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword) {
+
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {

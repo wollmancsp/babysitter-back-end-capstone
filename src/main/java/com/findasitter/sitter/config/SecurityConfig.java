@@ -37,12 +37,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users", "/users/login", "/users/CreateUser", "/users/PromoteUser", "/users/EditUserProfile","/users/DeleteUser", "/users/ToggleUserEnabled", "/users/createTestPasswords", "/users/setUserPFP", "/create", "/message/ChatCreate", "/message/MessageCreate", "/message", "transaction/TransactionCreate", "transaction/UpdateTransactionStatus").permitAll()
                         .requestMatchers("/", "/login", "/users/get-image-dynamic-type/**", "/users/getPfp","/create", "/error", "/users", "users/RandomSearchByCity", "users/FindByUserID/**", "/users/SearchByCity/**", "/users/ReturnPfp/**", "/message/FindAllChats/**", "users/GetUserIDs/**", "/message/MessageCreate", "/message/UpdateChat/**", "/transaction", "transaction/GetTransactionsByUserID/**", "/profilePicture/**", "/**").permitAll() // Allow unrestricted access to home page
                         .anyRequest().authenticated()) // All other endpoints require authentication
-//                .formLogin(form -> form
-//                        .loginPage("/login") // Specify custom login page
-//                        .usernameParameter("user_emailaddress") // Use "user_emailaddress" instead of "username"
-//                        .passwordParameter("user_password") // Keep the default password parameter
-//                        .defaultSuccessUrl("/", true) // Redirect to home page on successful login
-//                        .permitAll()) // Allow everyone to access the login page
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }

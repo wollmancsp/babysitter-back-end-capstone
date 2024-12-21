@@ -145,6 +145,7 @@ public class UserRepository {
                         "user_emailaddress,user_phone,user_fname,user_lname," +
                         "user_password,user_role,user_enabled) " +
                         "values(?,?,?,?,?,?,?)")
+
                 .params(List.of(
                         user.getUser_emailaddress(),
                         user.getUser_phone(),
@@ -153,8 +154,20 @@ public class UserRepository {
                         user.getUser_password(),
                         user.getUser_role(),
                         user.getUser_enabled()))
+
                 .update();
         Assert.state(updated == 1, "Failed to create user: " + user.getUser_emailaddress());
+    }
+
+    public void changePassword(String emailaddress, String newPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+
+        var updated = jdbcClient.sql("UPDATE user SET user_password = ? WHERE user_emailaddress = ?")
+                .params(encodedPassword, emailaddress)
+                .update();
+
+        Assert.state(updated == 1, "Failed to update password for user: " + emailaddress);
     }
 
     public void update(User user, String email) {
