@@ -1,4 +1,5 @@
 package com.findasitter.sitter.transaction;
+
 import com.findasitter.sitter.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,6 @@ public class TransactionRepository {
     }
 
     public List<Transaction> GetTransactionsByUserID(Integer userID) {
-        return jdbcClient.sql("SELECT * FROM job WHERE job_parent = :userID OR job_sitter = :userID").param("userID", userID).query(Transaction.class).stream().toList();
+        return jdbcClient.sql("SELECT * FROM job WHERE job_parent = :userID OR job_sitter = :userID").param("userID", userID).query(Transaction.class).list();
     }
 }

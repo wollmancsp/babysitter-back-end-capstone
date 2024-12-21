@@ -1,12 +1,13 @@
 package com.findasitter.sitter.chat;
+
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
 import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("/message")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(FRONT_END_PORT)
 public class ChatController {
     private final ChatRepository chatRepository;
 
@@ -17,7 +18,6 @@ public class ChatController {
     // Searches database to find chats with a specific userID
     @GetMapping("FindAllChats/{userID}")
     List<Chat> findAllChatsByUserID(@PathVariable Integer userID) {
-//        System.out.println("1: " + userID);
         return chatRepository.findAllChatsByUserID(userID);
     }
 

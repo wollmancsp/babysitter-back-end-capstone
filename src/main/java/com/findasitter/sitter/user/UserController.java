@@ -1,19 +1,29 @@
 package com.findasitter.sitter.user;
+
+import java.nio.file.Files;
 import jakarta.validation.Valid;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.nio.file.Paths;
+import java.util.*;
+
+import static com.findasitter.sitter.constants.GlobalConstants.FRONT_END_PORT;
+import static com.findasitter.sitter.constants.GlobalConstants.IDE_BASE_PATH;
 import static java.lang.Integer.parseInt;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin(FRONT_END_PORT)
 public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -37,10 +47,57 @@ public class UserController {
         return usersList;
     }
 
+    //Request Profile Picture
+    @GetMapping("/getPfp")
+    public ResponseEntity<InputStreamResource> getPfp(@RequestParam("param1") String userID, @RequestParam("param2") BigInteger DateTimeUpdated) throws FileNotFoundException {
+        InputStream inBackUp = new FileInputStream(IDE_BASE_PATH + "defaultUserAvatar.png");
+        InputStream in = null;
+        MediaType contentType = null;
+        ArrayList<String> allowedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
+        for (String allowedFileType : allowedFileTypes) {
+            if(Files.exists(Paths.get(IDE_BASE_PATH + userID + "." + allowedFileType))) {
+                in = new FileInputStream(IDE_BASE_PATH + userID + "." + allowedFileType);
+                contentType = returnMediaType(allowedFileType);
+                break;
+            }
+        }
+        if(in != null && contentType != null) {
+            return ResponseEntity.ok()
+                    .contentType(contentType)
+                    .body(new InputStreamResource(in));
+        }else {
+            //If no file exists, return default img.
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(new InputStreamResource(inBackUp));
+        }
+    }
+
+    //Toggles the User's enable variable
+    @PostMapping("/setUserPFP")
+    boolean SetPFP(@RequestBody @RequestParam("image") MultipartFile file, @RequestParam("p1") Integer userID) {
+        return userRepository.setUserPFP(file, userID);
+    }
+
+    public MediaType returnMediaType(String stringType) {
+        if(Objects.equals(stringType, "jpg") || Objects.equals(stringType, "jpeg"))
+            return MediaType.IMAGE_JPEG;
+        else if(Objects.equals(stringType, "png"))
+            return MediaType.IMAGE_PNG;
+        else
+            return null;
+    }
+
     // Searches database to find user record with a specified city
     @GetMapping("SearchByCity/{city}")
     List<User> SearchByCity(@PathVariable String city) {
         return userRepository.findByCity(city);
+    }
+
+    // Returns 6 random sitters for the initial FAB popup screen.
+    @GetMapping("RandomSearchByCity")
+    List<User> RandomSearchByCity() {
+        return userRepository.RandomSearchByCity();
     }
 
     // Lists all user accounts in database
@@ -74,11 +131,11 @@ public class UserController {
         return userRepository.DeleteUser(parseInt(userID));
     }
 
-    /* MERGE */
     @PostMapping("/PromoteUser")
     boolean PromoteToAdmin(@RequestBody @RequestParam("p1") String userID) {
         return userRepository.PromoteToAdmin(parseInt(userID));
     }
+
     @PutMapping("/makeAdmin")
     public ResponseEntity<String> makeAdmin(@RequestBody MakeAdminRequest request) {
         try {
@@ -88,9 +145,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user admin: " + request.getUser_emailaddress());
         }
     }
-    /* MERGE */
 
-    /* ADD */
     @PutMapping("/demoteAdmin")
     public ResponseEntity<String> demoteAdmin(@RequestBody DemoteAdminRequest request) {
         try {
@@ -101,7 +156,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/create")
+    // Creates new user
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/CreateUser")
+
     void create(@Valid @RequestBody User user) {
         String hashedPassword = passwordEncoder.encode(user.getUser_password());
         user.setUser_password(hashedPassword);
@@ -109,6 +167,28 @@ public class UserController {
         userRepository.create(user);
     }
 
+    //For generating test passwords for users.
+    @PostMapping("/createTestPasswords")
+    public List<String> createTestPasswords(@RequestBody List<String> passwords) {
+        List<String> testPasswords = new ArrayList<>();
+        for (String password : passwords) {
+            testPasswords.add(passwordEncoder.encode(password));
+        }
+        return testPasswords;
+    }
+
+    //Toggles the User's enable variable
+    @PostMapping("/ToggleUserEnabled")
+    boolean ToggleUserEnabled(@RequestBody @RequestParam("p1") Boolean userEnabled, @RequestParam("p2") Integer userID) {
+        return userRepository.ToggleUserEnabled(userEnabled, userID);
+    }
+
+    //Toggles the User's enable variable
+    @PostMapping("/EditUserProfile")
+    boolean SetPFP(@RequestBody User user) {
+        userRepository.nonBlankUpdate(user);
+        return true;
+    }
 
     // Updates existing user with specified email address
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -120,8 +200,8 @@ public class UserController {
 
     @PostMapping("/login")
     public User login(@RequestBody LoginRequest loginRequest) { //ResponseEntity<String>
+        System.out.println("Email: " + loginRequest.getEmail());
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
         if (userOptional.isEmpty()) {
             System.out.println("Invalid email or password 1");
             return null;
@@ -138,39 +218,9 @@ public class UserController {
         }
     }
 
-    // Disable user account in db
-//    @PutMapping("/enabledisable")
-//    public void enableDisable(@RequestBody DemoteAdminRequest request) {
-//        try {
-//            userRepository.demoteAdmin(request.getUser_emailaddress());
-//            return ResponseEntity.ok("User with email " + request.getUser_emailaddress() + " is no longer admin.");
-//        } catch (IllegalStateException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to make user non-admin: " + request.getUser_emailaddress());
-//        }
-//    }
-    @GetMapping("/enableUser/{emailAddress}")
-    ResponseEntity<String> enableUser(@PathVariable String emailAddress) {
-        Optional<User> userList = userRepository.findByEmail(emailAddress);
-        try {
-            userRepository.enableUser(emailAddress);
-            return ResponseEntity.ok(emailAddress + " has been enabled.");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to enable: " + emailAddress);
-        }
-    }
-    @GetMapping("/disableUser/{emailAddress}")
-    ResponseEntity<String> disableUser(@PathVariable String emailAddress) {
-        Optional<User> userList = userRepository.findByEmail(emailAddress);
-        try {
-            userRepository.disableUser(emailAddress);
-            return ResponseEntity.ok(emailAddress + " has been disabled.");
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to disable: " + emailAddress);
-        }
-    }
-
     @PutMapping("/changePassword")
-    public ResponseEntity<String> updatePassword(@RequestParam String email, @RequestParam String currentPassword, @RequestParam String newPassword) {
+    public ResponseEntity<String> updatePassword(@RequestBody @RequestParam("email") String email, @RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword) {
+
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {
@@ -189,20 +239,3 @@ public class UserController {
         return ResponseEntity.ok("Password updated successfully.");
     }
 }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-//        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-//
-//        if (userOptional.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//
-//        User user = userOptional.get();
-//        if (passwordEncoder.matches(loginRequest.getPassword(), user.getUser_password())) {
-//            String token = JwtUtil.generateToken(user.getUser_password());
-//            return ResponseEntity.ok(token);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
-//        }
-//    }
